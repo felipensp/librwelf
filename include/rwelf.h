@@ -39,9 +39,9 @@ typedef struct _rwelf {
 	int fd;
 	unsigned char *file;
 	size_t size;	
-	ElfW(Ehdr) *header;
-	ElfW(Phdr) *pheader;
-	ElfW(Shdr) *sheader;
+	ElfW(Ehdr) *ehdr;
+	ElfW(Phdr) *phdr;
+	ElfW(Shdr) *shdr;
 	unsigned char *sstrtab;
 } rwelf;
 

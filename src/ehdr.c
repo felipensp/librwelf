@@ -33,7 +33,7 @@ const char *rwelf_class(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
-	switch (elf->header->e_ident[EI_CLASS]) {
+	switch (elf->ehdr->e_ident[EI_CLASS]) {
 		case ELFCLASS32:	return "ELF32";
 		case ELFCLASS64:	return "ELF64";	
 		case ELFCLASSNONE:
@@ -49,7 +49,7 @@ int rwelf_version(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
-	switch (elf->header->e_ident[EI_VERSION]) {
+	switch (elf->ehdr->e_ident[EI_VERSION]) {
 		case EV_CURRENT:	return EV_CURRENT;
 		case EV_NONE:
 		default:			return 0;
@@ -64,7 +64,7 @@ const char *rwelf_data(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
-	switch (elf->header->e_ident[EI_DATA]) {
+	switch (elf->ehdr->e_ident[EI_DATA]) {
 		case ELFDATA2LSB:	return "2's complement, little-endian";
 		case ELFDATA2MSB:	return "2's complement, big-endian";
 		case ELFDATANONE:
@@ -80,7 +80,7 @@ const char *rwelf_type(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
-	switch (elf->header->e_type) {
+	switch (elf->ehdr->e_type) {
 		case ET_REL:	return "REL (relocatable file)";
 		case ET_EXEC:	return "EXEC (executable file)";
 		case ET_DYN:	return "DYN (shared object)";
@@ -98,7 +98,7 @@ int rwelf_num_sections(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
-	return elf->header->e_shnum;
+	return elf->ehdr->e_shnum;
 }
 
 /**
@@ -109,7 +109,7 @@ int rwelf_num_pheaders(const rwelf *elf)
 {
 	assert(elf != NULL);
 
-	return elf->header->e_phnum;
+	return elf->ehdr->e_phnum;
 }
 
 /**
@@ -120,5 +120,5 @@ uintptr_t rwelf_entry(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
-	return elf->header->e_entry;
+	return elf->ehdr->e_entry;
 }

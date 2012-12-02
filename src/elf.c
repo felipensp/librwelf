@@ -59,11 +59,11 @@ rwelf *rwelf_open(const char *fname)
 	obj->fd   = fd;	
 	obj->size = st.st_size;
 	
-	obj->header  = (ElfW(Ehdr)*) obj->file;
-	obj->pheader = (ElfW(Phdr)*) (obj->file + obj->header->e_phoff);
-	obj->sheader = (ElfW(Shdr)*) (obj->file + obj->header->e_shoff);
+	obj->ehdr  = (ElfW(Ehdr)*) obj->file;
+	obj->phdr = (ElfW(Phdr)*) (obj->file + obj->ehdr->e_phoff);
+	obj->shdr = (ElfW(Shdr)*) (obj->file + obj->ehdr->e_shoff);
 	obj->sstrtab = (unsigned char*) (obj->file + 
-		obj->sheader[obj->header->e_shstrndx].sh_offset);
+		obj->shdr[obj->ehdr->e_shstrndx].sh_offset);
 	
 	return obj;
 }
