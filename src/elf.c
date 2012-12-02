@@ -72,13 +72,8 @@ rwelf *rwelf_open(const char *fname)
 
 	mem = mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
 	
-	if (mem == MAP_FAILED) {
+	if (mem == MAP_FAILED || memcmp(mem, ELFMAG, SELFMAG) != 0) {
 		close(fd);
-		return NULL;
-	}
-	
-	/* Checking for magic numbers */
-	if (memcmp(mem, ELFMAG, SELFMAG) != 0) {
 		return NULL;
 	}
 	
