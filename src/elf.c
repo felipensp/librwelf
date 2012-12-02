@@ -62,6 +62,8 @@ rwelf *rwelf_open(const char *fname)
 	obj->ehdr  = (ElfW(Ehdr)*) obj->file;
 	obj->phdr = (ElfW(Phdr)*) (obj->file + obj->ehdr->e_phoff);
 	obj->shdr = (ElfW(Shdr)*) (obj->file + obj->ehdr->e_shoff);
+	
+	/* String table for section names */
 	obj->sstrtab = (unsigned char*) (obj->file + 
 		obj->shdr[obj->ehdr->e_shstrndx].sh_offset);
 	
