@@ -48,6 +48,11 @@ typedef struct _rwelf {
 
 
 extern rwelf *rwelf_open(const char *);
+extern void rwelf_close(rwelf *);
+
+/**
+ * ElfN_Ehdr related functions 
+ */
 extern const char *rwelf_class(const rwelf *);
 extern const char *rwelf_data(const rwelf *);
 extern int rwelf_version(const rwelf *);
@@ -55,7 +60,6 @@ extern const char *rwelf_type(const rwelf *);
 extern int rwelf_num_sections(const rwelf *);
 extern int rwelf_num_pheaders(const rwelf *);
 extern uintptr_t rwelf_entry(const rwelf *);
-extern void rwelf_close(rwelf *);
 
 
 #endif /* RWELF_H */
