@@ -62,7 +62,8 @@ rwelf *rwelf_open(const char *fname)
 	obj->header  = (ElfW(Ehdr)*) obj->file;
 	obj->pheader = (ElfW(Phdr)*) (obj->file + obj->header->e_phoff);
 	obj->sheader = (ElfW(Shdr)*) (obj->file + obj->header->e_shoff);
-	obj->sstrtab = (ElfW(Shdr)*) (obj->file + obj->sheader[obj->header->e_shstrndx].sh_offset);
+	obj->sstrtab = (unsigned char*) (obj->file + 
+		obj->sheader[obj->header->e_shstrndx].sh_offset);
 	
 	return obj;
 }
