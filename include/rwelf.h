@@ -28,6 +28,7 @@
 
 #include <assert.h>
 #include <elf.h>
+#include <stdint.h>
 #include <link.h>
 
 #ifndef NULL
@@ -41,6 +42,8 @@ typedef struct _rwelf {
 	unsigned char *file;
 	size_t size;	
 	ElfW(Ehdr) *header;
+	ElfW(Phdr) *pheader;
+	ElfW(Shdr) *sheader;
 } rwelf;
 
 
@@ -49,6 +52,9 @@ extern const char *rwelf_class(const rwelf *);
 extern const char *rwelf_data(const rwelf *);
 extern int rwelf_version(const rwelf *);
 extern const char *rwelf_type(const rwelf *);
+extern int rwelf_num_sections(const rwelf *);
+extern int rwelf_num_pheaders(const rwelf *);
+extern uintptr_t rwelf_entry(const rwelf *);
 extern void rwelf_close(rwelf *);
 
 

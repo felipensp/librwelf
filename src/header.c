@@ -89,3 +89,36 @@ const char *rwelf_type(const rwelf *elf)
 		default:		return NULL;
 	}
 }
+
+/**
+ * rwelf_num_sections(const rwelf *elf)
+ * Returns the number of entries on sections header table
+ */
+int rwelf_num_sections(const rwelf *elf)
+{
+	assert(elf != NULL);
+	
+	return elf->header->e_shnum;
+}
+
+/**
+ * rwelf_num_pheader(const rwelf *elf)
+ * Returns the number of entries on program header table
+ */
+int rwelf_num_pheaders(const rwelf *elf)
+{
+	assert(elf != NULL);
+
+	return elf->header->e_phnum;
+}
+
+/**
+ * rwelf_entry(const rwelf *elf)
+ * Returns the virtual address of entry point
+ */ 
+uintptr_t rwelf_entry(const rwelf *elf)
+{
+	assert(elf != NULL);
+	
+	return elf->header->e_entry;
+}
