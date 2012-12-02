@@ -31,6 +31,28 @@
 #include <stdlib.h>
 
 /**
+ * Finds the string table used for ElfN_Sym and ElfN_Shdr
+ */
+static void inline _find_str_tables(rwelf *elf)
+{
+	int i;
+	
+	/* String table for section names */
+	elf->sstrtab = elf->file + elf->shdr[elf->ehdr->e_shstrndx].sh_offset;
+	
+	/* Find the symbol string table */
+	for (i = 0; i < elf->ehdr->e_shnum; ++i) {
+		if (elf->shdr[i].sh_type != SHT_STRTAB
+			|| elf->shdr[i].sh_flags != 0
+			|| elf->ehdr->e_shstrndx == i) {
+			continue;
+		}
+		elf->symtab = elf->file + elf->shdr[i].sh_offset;
+		break;		
+	}
+}
+
+/**
  * rwelf_open(const char*)
  * Opens a ELF file for reading/writing
  */
@@ -39,7 +61,7 @@ rwelf *rwelf_open(const char *fname)
 	unsigned char *mem;
 	struct stat st;
 	int fd;
-	rwelf *obj;
+	rwelf *elf;
 
 	if ((fd = open(fname, O_RDONLY)) == -1) {
 		return NULL;
@@ -54,20 +76,18 @@ rwelf *rwelf_open(const char *fname)
 		return NULL;
 	}
 	
-	obj = malloc(sizeof(rwelf));
-	obj->file = mem;
-	obj->fd   = fd;	
-	obj->size = st.st_size;
+	elf = calloc(1, sizeof(rwelf));
+	elf->file = mem;
+	elf->fd   = fd;	
+	elf->size = st.st_size;
 	
-	obj->ehdr  = (ElfW(Ehdr)*) obj->file;
-	obj->phdr = (ElfW(Phdr)*) (obj->file + obj->ehdr->e_phoff);
-	obj->shdr = (ElfW(Shdr)*) (obj->file + obj->ehdr->e_shoff);
+	elf->ehdr  = (ElfW(Ehdr)*) elf->file;
+	elf->phdr = (ElfW(Phdr)*) (elf->file + elf->ehdr->e_phoff);
+	elf->shdr = (ElfW(Shdr)*) (elf->file + elf->ehdr->e_shoff);
+		
+	_find_str_tables(elf);
 	
-	/* String table for section names */
-	obj->sstrtab = (unsigned char*) (obj->file + 
-		obj->shdr[obj->ehdr->e_shstrndx].sh_offset);
-	
-	return obj;
+	return elf;
 }
 
 /**

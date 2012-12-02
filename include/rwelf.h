@@ -43,6 +43,7 @@ typedef struct _rwelf {
 	ElfW(Phdr) *phdr;
 	ElfW(Shdr) *shdr;
 	unsigned char *sstrtab;
+	unsigned char *symtab;
 } rwelf;
 
 /**
