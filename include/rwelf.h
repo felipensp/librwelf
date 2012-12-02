@@ -45,7 +45,9 @@ typedef struct _rwelf {
 	unsigned char *sstrtab;
 } rwelf;
 
-
+/**
+ * Functions for handling internal rwelf data
+ */
 extern rwelf *rwelf_open(const char *);
 extern void rwelf_close(rwelf *);
 
