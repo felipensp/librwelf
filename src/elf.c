@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <string.h>
 
 /**
  * Finds the string table used for ElfN_Sym and ElfN_Shdr
@@ -76,12 +77,16 @@ rwelf *rwelf_open(const char *fname)
 		return NULL;
 	}
 	
+	/* Checking for magic numbers */
+	if (memcmp(mem, ELFMAG, SELFMAG) != 0) {
+		return NULL;
+	}
+	
 	elf = calloc(1, sizeof(rwelf));
 	elf->file = mem;
 	elf->fd   = fd;	
-	elf->size = st.st_size;
-	
-	elf->ehdr  = (ElfW(Ehdr)*) elf->file;
+	elf->size = st.st_size;		
+	elf->ehdr = (ElfW(Ehdr)*) elf->file;
 	elf->phdr = (ElfW(Phdr)*) (elf->file + elf->ehdr->e_phoff);
 	elf->shdr = (ElfW(Shdr)*) (elf->file + elf->ehdr->e_shoff);
 		
