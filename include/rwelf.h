@@ -35,8 +35,6 @@
 #define NULL ((void*)0)
 #endif
 
-struct rwelf;
-
 typedef struct _rwelf {
 	int fd;
 	unsigned char *file;
@@ -44,6 +42,7 @@ typedef struct _rwelf {
 	ElfW(Ehdr) *header;
 	ElfW(Phdr) *pheader;
 	ElfW(Shdr) *sheader;
+	unsigned char *sstrtab;
 } rwelf;
 
 
@@ -61,5 +60,9 @@ extern int rwelf_num_sections(const rwelf *);
 extern int rwelf_num_pheaders(const rwelf *);
 extern uintptr_t rwelf_entry(const rwelf *);
 
+/**
+ * ElfN_Shdr related functions
+ */
+extern const unsigned char *rwelf_section_name(const rwelf *, size_t);
 
 #endif /* RWELF_H */
