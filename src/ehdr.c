@@ -34,7 +34,7 @@ const char *rwelf_class(const rwelf *elf)
 	assert(elf != NULL);
 	
 	switch (elf->header->e_ident[EI_CLASS]) {
-		case ELFCLASS32:    return "ELF32";
+		case ELFCLASS32:	return "ELF32";
 		case ELFCLASS64:	return "ELF64";	
 		case ELFCLASSNONE:
 		default:			return NULL;
