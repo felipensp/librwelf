@@ -39,15 +39,16 @@ struct rwelf;
 typedef struct _rwelf {
 	int fd;
 	unsigned char *file;
-	size_t size;
-	
+	size_t size;	
 	ElfW(Ehdr) *header;
 } rwelf;
 
 
 extern rwelf *rwelf_open(const char *);
-extern char *rwelf_class(const rwelf *);
-extern char *rwelf_version(const rwelf *);
+extern const char *rwelf_class(const rwelf *);
+extern const char *rwelf_data(const rwelf *);
+extern int rwelf_version(const rwelf *);
+extern const char *rwelf_type(const rwelf *);
 extern void rwelf_close(rwelf *);
 
 

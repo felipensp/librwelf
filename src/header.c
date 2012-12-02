@@ -26,10 +26,10 @@
 #include "rwelf.h"
 
 /**
- * rwelf_class(rwelf)
+ * rwelf_class(const rwelf *)
  * Returns the architecture of the binary
  */
-char *rwelf_class(const rwelf *elf) 
+const char *rwelf_class(const rwelf *elf) 
 {
 	assert(elf != NULL);
 	
@@ -42,17 +42,50 @@ char *rwelf_class(const rwelf *elf)
 }
 
 /**
- * rwelf_version(rwelf)
- * Returns the data encoding of the processor-specific data in the file
+ * rwelf_version(const rwelf *)
+ * Returns the version number of ELF specification
  */
-char *rwelf_version(const rwelf *elf)
+int rwelf_version(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
 	switch (elf->header->e_ident[EI_VERSION]) {
+		case EV_CURRENT:	return EV_CURRENT;
+		case EV_NONE:
+		default:			return 0;
+	}
+}
+
+/**
+ * rwelf_data(const rwelf *)
+ * Returns the data encoding of the processor-specific data in the file
+ */
+const char *rwelf_data(const rwelf *elf)
+{
+	assert(elf != NULL);
+	
+	switch (elf->header->e_ident[EI_DATA]) {
 		case ELFDATA2LSB:	return "2's complement, little-endian";
 		case ELFDATA2MSB:	return "2's complement, big-endian";
 		case ELFDATANONE:
 		default:			return NULL;
+	}
+}
+
+/**
+ * rwelf_type(const rwelf *)
+ * Returns the object file type
+ */
+const char *rwelf_type(const rwelf *elf)
+{
+	assert(elf != NULL);
+	
+	switch (elf->header->e_type) {
+		case ET_REL:	return "REL (relocatable file)";
+		case ET_EXEC:	return "EXEC (executable file)";
+		case ET_DYN:	return "DYN (shared object)";
+		case ET_CORE:	return "CORE (core file)";
+		case ET_NONE:
+		default:		return NULL;
 	}
 }
