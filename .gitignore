@@ -1,0 +1,3 @@
+librwelf.so*
+src/*.o
+tools/rwelf/rwelf
