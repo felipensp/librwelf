@@ -9,11 +9,8 @@ const unsigned char *rwelf_symbol_name(const rwelf *elf, size_t num)
 {
 	assert(elf != NULL);
 	
-	if (elf->sym.symtab == NULL || elf->sym.nsyms < num) {
-		return NULL;
-	}
-	
-	if (!elf->sym.symtab[num].st_name) {
+	if (elf->sym.symtab == NULL || elf->sym.nsyms < num
+		|| elf->sym.symtab[num].st_name == 0) {
 		return NULL;
 	}
 	
