@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
-	int i, num_sections;
+	int i, num_sections, num_symbols;
 	rwelf *elf = rwelf_open("./librwelf.so");
 	
 	if (!elf) {
@@ -20,7 +20,12 @@ int main(int argc, char **argv) {
 	num_sections = rwelf_num_sections(elf);
 		
 	for (i = 0; i < num_sections; ++i) {
-		printf("Section [%s]\n", rwelf_section_name(elf, i));
+		printf("Section: %s\n", rwelf_section_name(elf, i));
+	}
+	
+	num_symbols = rwelf_num_symbols(elf);
+	for (i = 0; i < num_symbols; ++i) {
+		printf("Symbol: %s\n", rwelf_symbol_name(elf, i));
 	}
 
 	rwelf_close(elf);

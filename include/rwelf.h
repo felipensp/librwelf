@@ -35,15 +35,19 @@
 #define NULL ((void*)0)
 #endif
 
-typedef struct _rwelf {
+typedef struct {
 	int fd;
 	unsigned char *file;
 	size_t size;	
 	ElfW(Ehdr) *ehdr;
 	ElfW(Phdr) *phdr;
 	ElfW(Shdr) *shdr;
-	unsigned char *sstrtab;
-	unsigned char *symtab;
+	struct {
+		ElfW(Sym)  *symtab;   /* symtab section */
+		size_t       nsyms;   /* number of symbols */
+	} sym;	
+	unsigned char *sstrtab;   /* Section name string table */
+	unsigned char *symstrtab; /* Symbol name string table */
 } rwelf;
 
 /**
@@ -67,5 +71,10 @@ extern uintptr_t rwelf_entry(const rwelf *);
  * ElfN_Shdr related functions
  */
 extern const unsigned char *rwelf_section_name(const rwelf *, size_t);
+
+/**
+ * ElfN_Sym related functions
+ */
+extern const unsigned char *rwelf_symbol_name(const rwelf *, size_t);
 
 #endif /* RWELF_H */

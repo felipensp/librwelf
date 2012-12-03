@@ -41,15 +41,28 @@ static void inline _find_str_tables(rwelf *elf)
 	/* String table for section names */
 	elf->sstrtab = elf->file + elf->shdr[elf->ehdr->e_shstrndx].sh_offset;
 	
-	/* Find the symbol string table */
+	/* Find the symbol string table and symtab */
 	for (i = 0; i < elf->ehdr->e_shnum; ++i) {
-		if (elf->shdr[i].sh_type != SHT_STRTAB
-			|| elf->shdr[i].sh_flags != 0
-			|| elf->ehdr->e_shstrndx == i) {
-			continue;
+		switch (elf->shdr[i].sh_type) {
+			case SHT_STRTAB:
+				if (elf->shdr[i].sh_flags == 0
+					&& elf->ehdr->e_shstrndx != i) {
+					/* Symbol name string table */
+					elf->symstrtab = elf->file + elf->shdr[i].sh_offset;
+				}
+				break;
+			case SHT_SYMTAB:
+				/* symtab section */
+				elf->sym.symtab = (ElfW(Sym)*) (elf->file +
+					elf->shdr[i].sh_offset);
+				
+				elf->sym.nsyms = elf->shdr[i].sh_size / 
+					elf->shdr[i].sh_entsize;
+				break;
 		}
-		elf->symtab = elf->file + elf->shdr[i].sh_offset;
-		break;		
+		if (elf->symstrtab && elf->sym.symtab) {
+			break;
+		}
 	}
 }
 
@@ -78,6 +91,9 @@ rwelf *rwelf_open(const char *fname)
 	}
 	
 	elf = calloc(1, sizeof(rwelf));
+	
+	assert(elf != NULL);
+	
 	elf->file = mem;
 	elf->fd   = fd;	
 	elf->size = st.st_size;		
