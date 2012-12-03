@@ -43,8 +43,8 @@ typedef struct {
 	ElfW(Phdr) *phdr;
 	ElfW(Shdr) *shdr;
 	struct {
-		ElfW(Sym)  *symtab;   /* symtab section */
-		size_t       nsyms;   /* number of symbols */
+		ElfW(Sym) *symtab;   /* symtab section */
+		size_t      nsyms;   /* number of symbols */
 	} sym;	
 	unsigned char *sstrtab;   /* Section name string table */
 	unsigned char *symstrtab; /* Symbol name string table */

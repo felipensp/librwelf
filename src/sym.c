@@ -26,5 +26,7 @@ const unsigned char *rwelf_symbol_name(const rwelf *elf, size_t num)
  */
 size_t rwelf_num_symbols(const rwelf *elf)
 {
+	assert(elf != NULL);
+	
 	return elf->sym.nsyms;
 }
