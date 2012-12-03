@@ -18,7 +18,6 @@ int main(int argc, char **argv) {
 	printf("Entry:    %p\n", rwelf_entry(elf));
 	
 	num_sections = rwelf_num_sections(elf);
-		
 	for (i = 0; i < num_sections; ++i) {
 		printf("Section: %s\n", rwelf_section_name(elf, i));
 	}
