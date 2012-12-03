@@ -76,5 +76,6 @@ extern const unsigned char *rwelf_section_name(const rwelf *, size_t);
  * ElfN_Sym related functions
  */
 extern const unsigned char *rwelf_symbol_name(const rwelf *, size_t);
+extern size_t rwelf_num_symbols(const rwelf *);
 
 #endif /* RWELF_H */
