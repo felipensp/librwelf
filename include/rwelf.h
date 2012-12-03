@@ -43,11 +43,11 @@ typedef struct {
 	ElfW(Phdr) *phdr;
 	ElfW(Shdr) *shdr;
 	struct {
-		ElfW(Sym) *symtab;   /* .symtab section */
-		size_t      nsyms;   /* Number of symbols */
+		ElfW(Sym) *symtab;    /* .symtab section */
+		size_t      nsyms;    /* Number of symbols on .symtab */
 	} sym;	
-	unsigned char *sstrtab;   /* Section name string table */
-	unsigned char *symstrtab; /* Symbol name string table */
+	unsigned char *shstrtab;  /* Section name string table (.shstrtab) */
+	unsigned char *symstrtab; /* Symbol name string table (.strtab) */
 } rwelf;
 
 /**

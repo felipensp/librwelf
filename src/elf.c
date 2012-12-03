@@ -39,7 +39,7 @@ static void inline _find_str_tables(rwelf *elf)
 	int i;
 	
 	/* String table for section names */
-	elf->sstrtab = elf->file + elf->shdr[elf->ehdr->e_shstrndx].sh_offset;
+	elf->shstrtab = elf->file + elf->shdr[elf->ehdr->e_shstrndx].sh_offset;
 	
 	/* Find the symbol string table and symtab */
 	for (i = 0; i < elf->ehdr->e_shnum; ++i) {
