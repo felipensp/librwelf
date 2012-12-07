@@ -35,17 +35,58 @@
 #define NULL ((void*)0)
 #endif
 
+#define RWELF_DATA(_elf, _mem, _class) _elf->_mem._class
+
+#define EHDR32(_elf) RWELF_DATA(_elf, ehdr, _32)
+#define EHDR64(_elf) RWELF_DATA(_elf, ehdr, _64)
+#define SHDR32(_elf) RWELF_DATA(_elf, shdr, _32)
+#define SHDR64(_elf) RWELF_DATA(_elf, shdr, _64)
+#define PHDR32(_elf) RWELF_DATA(_elf, phdr, _32)
+#define PHDR64(_elf) RWELF_DATA(_elf, phdr, _64)
+#define SYM32(_elf)  RWELF_DATA(_elf,  sym, _32)
+#define SYM64(_elf)  RWELF_DATA(_elf,  sym, _64)
+
+#define RWELF_IS_32(_elf) (_elf->class == ELFCLASS32)
+#define RWELF_IS_64(_elf) (_elf->class == ELFCLASS64)
+
+#define RWELFN(_elf, _mem, _field, _i) \
+	(RWELF_IS_32(_elf) ? RWELF_DATA(_elf, _mem, _32)[_i]._field : RWELF_DATA(_elf, _mem, _64)[_i]._field)
+
+#define RWELF(_elf, _mem, _field) \
+	(RWELF_IS_32(_elf) ? RWELF_DATA(_elf, _mem, _32)->_field : RWELF_DATA(_elf, _mem, _64)->_field)
+	
+#define ELF_EHDR(_elf, _field)     RWELF(_elf,  ehdr, _field)
+#define ELF_SHDR(_elf, _field, _i) RWELFN(_elf, shdr, _field, _i)
+#define ELF_PHDR(_elf, _field, _i) RWELFN(_elf, phdr, _field, _i)
+#define ELF_SYM(_elf,  _field, _i) RWELFN(_elf,  sym, _field, _i)
+
 typedef struct {
 	int fd;
-	unsigned char *file;
-	size_t size;	
-	ElfW(Ehdr) *ehdr;
-	ElfW(Phdr) *phdr;
-	ElfW(Shdr) *shdr;
-	struct {
-		ElfW(Sym) *symtab;    /* .symtab section */
-		size_t      nsyms;    /* Number of symbols on .symtab */
+	unsigned char *file;      /* Mapped memory of file */
+	size_t size;              /* Size of the file */
+	unsigned char class;      /* ELF class 32/64 bit */
+	
+	union {
+		Elf32_Ehdr *_32;
+		Elf64_Ehdr *_64;
+	} ehdr;
+	
+	union {
+		Elf32_Phdr *_32;
+		Elf64_Phdr *_64;
+	} phdr;
+	
+	union {
+		Elf32_Shdr *_32;
+		Elf64_Shdr *_64;
+	} shdr;
+
+	union {                   /* .symtab section */
+		Elf32_Sym *_32;
+		Elf64_Sym *_64;
 	} sym;	
+	size_t nsyms;             /* Number of symbols on .symtab */
+	
 	unsigned char *shstrtab;  /* Section name string table (.shstrtab) */
 	unsigned char *symstrtab; /* Symbol name string table (.strtab) */
 } rwelf;
@@ -63,8 +104,9 @@ extern const char *rwelf_class(const rwelf *);
 extern const char *rwelf_data(const rwelf *);
 extern int rwelf_version(const rwelf *);
 extern const char *rwelf_type(const rwelf *);
-extern int rwelf_num_sections(const rwelf *);
-extern int rwelf_num_pheaders(const rwelf *);
+extern size_t rwelf_num_sections(const rwelf *);
+extern size_t rwelf_num_pheaders(const rwelf *);
+extern size_t rwelf_num_symbols(const rwelf *);
 extern uintptr_t rwelf_entry(const rwelf *);
 
 /**
@@ -76,6 +118,5 @@ extern const unsigned char *rwelf_section_name(const rwelf *, size_t);
  * ElfN_Sym related functions
  */
 extern const unsigned char *rwelf_symbol_name(const rwelf *, size_t);
-extern size_t rwelf_num_symbols(const rwelf *);
 
 #endif /* RWELF_H */

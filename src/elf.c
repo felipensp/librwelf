@@ -39,31 +39,61 @@ static void inline _find_str_tables(rwelf *elf)
 	int i;
 	
 	/* String table for section names */
-	elf->shstrtab = elf->file + elf->shdr[elf->ehdr->e_shstrndx].sh_offset;
+	elf->shstrtab = elf->file +
+		ELF_SHDR(elf, sh_offset, ELF_EHDR(elf, e_shstrndx));
 	
 	/* Find the symbol string table and symtab */
-	for (i = 0; i < elf->ehdr->e_shnum; ++i) {
-		switch (elf->shdr[i].sh_type) {
+	for (i = 0; i < ELF_EHDR(elf, e_shnum); ++i) {
+		switch (ELF_SHDR(elf, sh_type, i)) {
 			case SHT_STRTAB:
-				if (elf->shdr[i].sh_flags == 0
-					&& elf->ehdr->e_shstrndx != i) {
+				if (ELF_SHDR(elf, sh_flags, i) == 0
+					&& ELF_EHDR(elf, e_shstrndx) != i) {
 					/* Symbol name string table */
-					elf->symstrtab = elf->file + elf->shdr[i].sh_offset;
+					elf->symstrtab = elf->file + 
+						ELF_SHDR(elf, sh_offset, i);
 				}
 				break;
 			case SHT_SYMTAB:
 				/* symtab section */
-				elf->sym.symtab = (ElfW(Sym)*) (elf->file +
-					elf->shdr[i].sh_offset);
+				if (RWELF_IS_32(elf)) {
+					SYM32(elf) = (Elf32_Sym*)(elf->file +
+						ELF_SHDR(elf, sh_offset, i));
+				} else {
+					SYM64(elf) = (Elf64_Sym*)(elf->file +
+						ELF_SHDR(elf, sh_offset, i));
+				}
 				
-				elf->sym.nsyms = elf->shdr[i].sh_size / 
-					elf->shdr[i].sh_entsize;
+				elf->nsyms = ELF_SHDR(elf, sh_size, i) / 
+					ELF_SHDR(elf, sh_entsize, i);
 				break;
 		}
-		if (elf->symstrtab && elf->sym.symtab) {
-			break;
-		}
 	}
+}
+
+/**
+ * Prepares internal data according to ELF's class
+ */
+static int _prepare_internal_data(rwelf *elf)
+{
+	switch (elf->file[EI_CLASS]) {
+		case ELFCLASS32:
+			EHDR32(elf) = (Elf32_Ehdr*) elf->file;
+			PHDR32(elf) = (Elf32_Phdr*) (elf->file + EHDR32(elf)->e_phoff);
+			SHDR32(elf) = (Elf32_Shdr*) (elf->file + EHDR32(elf)->e_shoff);
+			break;
+		case ELFCLASS64:
+			EHDR64(elf) = (Elf64_Ehdr*) elf->file;
+			PHDR64(elf) = (Elf64_Phdr*) (elf->file + EHDR64(elf)->e_phoff);
+			SHDR64(elf) = (Elf64_Shdr*) (elf->file + EHDR64(elf)->e_shoff);
+			break;
+		case ELFCLASSNONE:
+		default:
+			return 0;
+	}
+
+	_find_str_tables(elf);
+	
+	return 1;
 }
 
 /**
@@ -96,14 +126,15 @@ rwelf *rwelf_open(const char *fname)
 	
 	elf->file = mem;
 	elf->fd   = fd;	
-	elf->size = st.st_size;		
-	elf->ehdr = (ElfW(Ehdr)*) elf->file;
-	elf->phdr = (ElfW(Phdr)*) (elf->file + elf->ehdr->e_phoff);
-	elf->shdr = (ElfW(Shdr)*) (elf->file + elf->ehdr->e_shoff);
-		
-	_find_str_tables(elf);
+	elf->size = st.st_size;
+
+	if (_prepare_internal_data(elf)) {
+		return elf;		
+	}
 	
-	return elf;
+	rwelf_close(elf);
+	
+	return NULL;
 }
 
 /**

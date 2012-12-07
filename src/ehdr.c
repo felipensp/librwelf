@@ -33,7 +33,7 @@ const char *rwelf_class(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
-	switch (elf->ehdr->e_ident[EI_CLASS]) {
+	switch (ELF_EHDR(elf, e_ident)[EI_CLASS]) {
 		case ELFCLASS32:	return "ELF32";
 		case ELFCLASS64:	return "ELF64";	
 		case ELFCLASSNONE:
@@ -49,7 +49,7 @@ int rwelf_version(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
-	switch (elf->ehdr->e_ident[EI_VERSION]) {
+	switch (ELF_EHDR(elf, e_ident)[EI_VERSION]) {
 		case EV_CURRENT:	return EV_CURRENT;
 		case EV_NONE:
 		default:			return 0;
@@ -64,7 +64,7 @@ const char *rwelf_data(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
-	switch (elf->ehdr->e_ident[EI_DATA]) {
+	switch (ELF_EHDR(elf, e_ident)[EI_DATA]) {
 		case ELFDATA2LSB:	return "2's complement, little-endian";
 		case ELFDATA2MSB:	return "2's complement, big-endian";
 		case ELFDATANONE:
@@ -80,7 +80,7 @@ const char *rwelf_type(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
-	switch (elf->ehdr->e_type) {
+	switch (ELF_EHDR(elf, e_type)) {
 		case ET_REL:	return "REL (relocatable file)";
 		case ET_EXEC:	return "EXEC (executable file)";
 		case ET_DYN:	return "DYN (shared object)";
@@ -94,22 +94,33 @@ const char *rwelf_type(const rwelf *elf)
  * rwelf_num_sections(const rwelf *elf)
  * Returns the number of entries on sections header table
  */
-int rwelf_num_sections(const rwelf *elf)
+size_t rwelf_num_sections(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
-	return elf->ehdr->e_shnum;
+	return ELF_EHDR(elf, e_shnum);
 }
 
 /**
  * rwelf_num_pheader(const rwelf *elf)
  * Returns the number of entries on program header table
  */
-int rwelf_num_pheaders(const rwelf *elf)
+size_t rwelf_num_pheaders(const rwelf *elf)
 {
 	assert(elf != NULL);
 
-	return elf->ehdr->e_phnum;
+	return ELF_EHDR(elf, e_phnum);
+}
+
+/**
+ * rwelf_num_symbols(const rwelf*)
+ * Returns the number of symbols in the symbol table
+ */
+size_t rwelf_num_symbols(const rwelf *elf)
+{
+	assert(elf != NULL);
+	
+	return elf->nsyms;
 }
 
 /**
@@ -120,5 +131,5 @@ uintptr_t rwelf_entry(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
-	return elf->ehdr->e_entry;
+	return ELF_EHDR(elf, e_entry);
 }
