@@ -49,16 +49,15 @@
 #define RWELF_IS_32(_elf) (_elf->class == ELFCLASS32)
 #define RWELF_IS_64(_elf) (_elf->class == ELFCLASS64)
 
-#define RWELFN(_elf, _mem, _field, _i) \
-	(RWELF_IS_32(_elf) ? RWELF_DATA(_elf, _mem, _32)[_i]._field : RWELF_DATA(_elf, _mem, _64)[_i]._field)
+#define RWELFN(_elf, _mem, _field, _n) \
+	(RWELF_IS_64(_elf) ? (RWELF_DATA(_elf, _mem, _64)+_n)->_field : (RWELF_DATA(_elf, _mem, _64)+_n)->_field)
 
-#define RWELF(_elf, _mem, _field) \
-	(RWELF_IS_32(_elf) ? RWELF_DATA(_elf, _mem, _32)->_field : RWELF_DATA(_elf, _mem, _64)->_field)
+#define RWELF(_elf, _mem, _field) RWELFN(_elf, _mem, _field, 0)
 	
 #define ELF_EHDR(_elf, _field)     RWELF(_elf,  ehdr, _field)
-#define ELF_SHDR(_elf, _field, _i) RWELFN(_elf, shdr, _field, _i)
-#define ELF_PHDR(_elf, _field, _i) RWELFN(_elf, phdr, _field, _i)
-#define ELF_SYM(_elf,  _field, _i) RWELFN(_elf,  sym, _field, _i)
+#define ELF_SHDR(_elf, _field, _n) RWELFN(_elf, shdr, _field, _n)
+#define ELF_PHDR(_elf, _field, _n) RWELFN(_elf, phdr, _field, _n)
+#define ELF_SYM(_elf,  _field, _n) RWELFN(_elf,  sym, _field, _n)
 
 typedef struct {
 	int fd;
@@ -118,5 +117,6 @@ extern const unsigned char *rwelf_section_name(const rwelf *, size_t);
  * ElfN_Sym related functions
  */
 extern const unsigned char *rwelf_symbol_name(const rwelf *, size_t);
+extern int rwelf_section_type(const rwelf *, size_t);
 
 #endif /* RWELF_H */

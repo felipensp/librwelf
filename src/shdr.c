@@ -26,7 +26,7 @@
 #include "rwelf.h"
 
 /**
- * rwelf_section_name(rwelf *elf, size_t shnum)
+ * rwelf_section_name(const rwelf *elf, size_t shnum)
  * Returns the name of the specified section
  */
 const unsigned char *rwelf_section_name(const rwelf *elf, size_t shnum)
@@ -35,4 +35,15 @@ const unsigned char *rwelf_section_name(const rwelf *elf, size_t shnum)
 	assert(elf->shstrtab != NULL);
 	
 	return elf->shstrtab + ELF_SHDR(elf, sh_name, shnum);
+}
+
+/**
+ * rwelf_section_type(const rwelf *elf, size_t shnum)
+ * Returns the section type of the specified section
+ */
+int rwelf_section_type(const rwelf *elf, size_t shnum)
+{
+	assert(elf != NULL);
+	
+	return ELF_SHDR(elf, sh_type, shnum);	
 }
