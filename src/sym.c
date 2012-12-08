@@ -34,8 +34,8 @@ const unsigned char *rwelf_symbol_name(const rwelf *elf, size_t num)
 {
 	assert(elf != NULL);
 	
-	if (((RWELF_IS_32(elf) && SYM32(elf) == NULL)
-		|| (RWELF_IS_64(elf) && SYM64(elf) == NULL))
+	if (((ELF_IS_32(elf) && SYM32(elf) == NULL)
+		|| (ELF_IS_64(elf) && SYM64(elf) == NULL))
 		|| elf->nsyms < num
 		|| ELF_SYM(elf, st_name, num) == 0) {
 		return NULL;

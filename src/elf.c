@@ -55,7 +55,7 @@ static void inline _find_str_tables(rwelf *elf)
 				break;
 			case SHT_SYMTAB:
 				/* symtab section */
-				if (RWELF_IS_32(elf)) {
+				if (ELF_IS_32(elf)) {
 					SYM32(elf) = (Elf32_Sym*)(elf->file +
 						ELF_SHDR(elf, sh_offset, i));
 				} else {
@@ -75,20 +75,18 @@ static void inline _find_str_tables(rwelf *elf)
  */
 static int _prepare_internal_data(rwelf *elf)
 {
-	switch (elf->file[EI_CLASS]) {
-		case ELFCLASS32:
-			EHDR32(elf) = (Elf32_Ehdr*) elf->file;
-			PHDR32(elf) = (Elf32_Phdr*) (elf->file + EHDR32(elf)->e_phoff);
-			SHDR32(elf) = (Elf32_Shdr*) (elf->file + EHDR32(elf)->e_shoff);
-			break;
-		case ELFCLASS64:
-			EHDR64(elf) = (Elf64_Ehdr*) elf->file;
-			PHDR64(elf) = (Elf64_Phdr*) (elf->file + EHDR64(elf)->e_phoff);
-			SHDR64(elf) = (Elf64_Shdr*) (elf->file + EHDR64(elf)->e_shoff);
-			break;
-		case ELFCLASSNONE:
-		default:
-			return 0;
+	elf->class = elf->file[EI_CLASS];
+	
+	if (ELF_IS_32(elf)) {
+		EHDR32(elf) = (Elf32_Ehdr*) elf->file;
+		PHDR32(elf) = (Elf32_Phdr*) (elf->file + EHDR32(elf)->e_phoff);
+		SHDR32(elf) = (Elf32_Shdr*) (elf->file + EHDR32(elf)->e_shoff);
+	} else if (ELF_IS_64(elf)) {
+		EHDR64(elf) = (Elf64_Ehdr*) elf->file;
+		PHDR64(elf) = (Elf64_Phdr*) (elf->file + EHDR64(elf)->e_phoff);
+		SHDR64(elf) = (Elf64_Shdr*) (elf->file + EHDR64(elf)->e_shoff);
+	} else {
+		return 0;
 	}
 
 	_find_str_tables(elf);

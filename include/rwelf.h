@@ -46,11 +46,11 @@
 #define SYM32(_elf)  RWELF_DATA(_elf,  sym, _32)
 #define SYM64(_elf)  RWELF_DATA(_elf,  sym, _64)
 
-#define RWELF_IS_32(_elf) (_elf->class == ELFCLASS32)
-#define RWELF_IS_64(_elf) (_elf->class == ELFCLASS64)
+#define ELF_IS_32(_elf) (_elf->class == ELFCLASS32)
+#define ELF_IS_64(_elf) (_elf->class == ELFCLASS64)
 
 #define RWELFN(_elf, _mem, _field, _n) \
-	(RWELF_IS_64(_elf) ? (RWELF_DATA(_elf, _mem, _64)+_n)->_field : (RWELF_DATA(_elf, _mem, _64)+_n)->_field)
+	(ELF_IS_64(_elf) ? (RWELF_DATA(_elf, _mem, _64)+_n)->_field : (RWELF_DATA(_elf, _mem, _64)+_n)->_field)
 
 #define RWELF(_elf, _mem, _field) RWELFN(_elf, _mem, _field, 0)
 	
