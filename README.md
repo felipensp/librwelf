@@ -35,6 +35,11 @@ int main(int argc, char **argv) {
 	for (i = 0; i < num_symbols; ++i) {
 		printf("Symbol: %s\n", rwelf_symbol_name(elf, i));
 	}
+	
+	if (ELF_IS_64(elf)) {
+		Elf_Shdr *got = rwelf_get_section(".got");
+		rwelf_section_type(got);
+	}
 
 	rwelf_close(elf);
 

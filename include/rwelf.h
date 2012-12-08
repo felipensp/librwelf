@@ -59,36 +59,58 @@
 #define ELF_PHDR(_elf, _field, _n) RWELFN(_elf, phdr, _field, _n)
 #define ELF_SYM(_elf,  _field, _n) RWELFN(_elf,  sym, _field, _n)
 
+typedef union {
+	Elf32_Shdr *_32;
+	Elf64_Shdr *_64;
+} rwelf_shdr;
+
+typedef union {
+	Elf32_Phdr *_32;
+	Elf64_Phdr *_64;
+} rwelf_phdr;
+
+typedef union {
+	Elf32_Ehdr *_32;
+	Elf64_Ehdr *_64;
+} rwelf_ehdr;
+
+typedef union {                   
+	Elf32_Sym *_32;
+	Elf64_Sym *_64;
+} rwelf_sym;
+
 typedef struct {
 	int fd;
 	unsigned char *file;      /* Mapped memory of file */
 	size_t size;              /* Size of the file */
 	unsigned char class;      /* ELF class 32/64 bit */
-	
-	union {
-		Elf32_Ehdr *_32;
-		Elf64_Ehdr *_64;
-	} ehdr;
-	
-	union {
-		Elf32_Phdr *_32;
-		Elf64_Phdr *_64;
-	} phdr;
-	
-	union {
-		Elf32_Shdr *_32;
-		Elf64_Shdr *_64;
-	} shdr;
-
-	union {                   /* .symtab section */
-		Elf32_Sym *_32;
-		Elf64_Sym *_64;
-	} sym;	
+	rwelf_ehdr ehdr;	
+	rwelf_phdr phdr;	
+	rwelf_shdr shdr;                 
+	rwelf_sym   sym;          /* .symtab section */
 	size_t nsyms;             /* Number of symbols on .symtab */
 	
 	unsigned char *shstrtab;  /* Section name string table (.shstrtab) */
 	unsigned char *symstrtab; /* Symbol name string table (.strtab) */
 } rwelf;
+
+/**
+ * ElfN_[ESP]hdr class independent-version 
+ */
+typedef struct {
+	const rwelf *elf;
+	rwelf_shdr shdr;
+} Elf_Shdr;
+
+typedef struct {
+	const rwelf *elf;
+	rwelf_phdr data;
+} Elf_Phdr;
+
+typedef struct {
+	const rwelf *elf;
+	rwelf_ehdr data;
+} Elf_Ehdr;
 
 /**
  * Functions for handling internal rwelf data
@@ -99,24 +121,26 @@ extern void rwelf_close(rwelf *);
 /**
  * ElfN_Ehdr related functions 
  */
-extern const char *rwelf_class(const rwelf *);
-extern const char *rwelf_data(const rwelf *);
-extern int rwelf_version(const rwelf *);
-extern const char *rwelf_type(const rwelf *);
-extern size_t rwelf_num_sections(const rwelf *);
-extern size_t rwelf_num_pheaders(const rwelf *);
-extern size_t rwelf_num_symbols(const rwelf *);
-extern uintptr_t rwelf_entry(const rwelf *);
+extern const char *rwelf_class(const rwelf*);
+extern const char *rwelf_data(const rwelf*);
+extern int rwelf_version(const rwelf*);
+extern const char *rwelf_type(const rwelf*);
+extern size_t rwelf_num_sections(const rwelf*);
+extern size_t rwelf_num_pheaders(const rwelf*);
+extern size_t rwelf_num_symbols(const rwelf*);
+extern uintptr_t rwelf_entry(const rwelf*);
 
 /**
  * ElfN_Shdr related functions
  */
-extern const unsigned char *rwelf_section_name(const rwelf *, size_t);
+extern void rwelf_get_section_by_num(const rwelf*, size_t, Elf_Shdr*);
+extern int rwelf_get_section_by_name(const rwelf*, const char*, Elf_Shdr*);
+extern const unsigned char *rwelf_get_section_name(const Elf_Shdr*);
+extern int rwelf_get_section_type(const Elf_Shdr*);
 
 /**
  * ElfN_Sym related functions
  */
-extern const unsigned char *rwelf_symbol_name(const rwelf *, size_t);
-extern int rwelf_section_type(const rwelf *, size_t);
+extern const unsigned char *rwelf_symbol_name(const rwelf*, size_t);
 
 #endif /* RWELF_H */
