@@ -78,18 +78,13 @@ int rwelf_get_dynamic_by_tag(const rwelf *elf, int64_t tag, Elf_Dyn *dyn)
  */
 const unsigned char *rwelf_get_dynamic_strval(const Elf_Dyn *dyn)
 {
-	uint64_t val;
-
 	assert(dyn != NULL);
 	assert(dyn->elf != NULL);
 	assert(dyn->elf->dynstrtab != NULL);
 	
 	switch (DYN_DATA(dyn, d_tag)) {
-		case DT_SONAME:
-			val = ELF_IS_64(dyn->elf) ? DYN64(dyn)->d_un.d_val
-				: DYN32(dyn)->d_un.d_val;
-			
-			return dyn->elf->dynstrtab + val;
+		case DT_SONAME:			
+			return dyn->elf->dynstrtab + DYN_DATA(dyn, d_un.d_val);
 		default:
 			return NULL;
 	}
