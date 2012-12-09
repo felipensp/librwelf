@@ -45,6 +45,8 @@
 #define PHDR64(_elf) RWELF_DATA(_elf, phdr, _64)
 #define SYM32(_elf)  RWELF_DATA(_elf,  sym, _32)
 #define SYM64(_elf)  RWELF_DATA(_elf,  sym, _64)
+#define DYN32(_elf)  RWELF_DATA(_elf,  dyn, _32)
+#define DYN64(_elf)  RWELF_DATA(_elf,  dyn, _64)
 
 #define ELF_IS_32(_elf) (_elf->class == ELFCLASS32)
 #define ELF_IS_64(_elf) (_elf->class == ELFCLASS64)
@@ -67,6 +69,9 @@
 	
 #define PHDR_DATA(_sym, _field) \
 	(ELF_IS_64(_sym->elf) ? PHDR64(_sym)->_field : PHDR32(_sym)->_field)
+	
+#define DYN_DATA(_dyn, _field) \
+	(ELF_IS_64(_dyn->elf) ? DYN64(_dyn)->_field : DYN32(_dyn)->_field)
 
 typedef union {
 	Elf32_Shdr *_32;
@@ -88,6 +93,11 @@ typedef union {
 	Elf64_Sym *_64;
 } rwelf_sym;
 
+typedef union {
+	Elf32_Dyn *_32;
+	Elf64_Dyn *_64;
+} rwelf_dyn;
+
 typedef struct {
 	int fd;
 	unsigned char *file;      /* Mapped memory of file */
@@ -97,7 +107,9 @@ typedef struct {
 	rwelf_phdr phdr;	
 	rwelf_shdr shdr;                 
 	rwelf_sym   sym;          /* .symtab section */
+	rwelf_dyn   dyn;          /* .dynamic section */
 	size_t nsyms;             /* Number of symbols on .symtab */
+	size_t ndyns;             /* Number of entries on .dynamic */
 	
 	unsigned char *shstrtab;  /* Section name string table (.shstrtab) */
 	unsigned char *symstrtab; /* Symbol name string table (.strtab) */
@@ -125,6 +137,11 @@ typedef struct {
 	const rwelf *elf;
 	rwelf_sym sym;
 } Elf_Sym;
+
+typedef struct {
+	const rwelf *elf;
+	rwelf_dyn dyn;
+} Elf_Dyn;
 
 /**
  * Functions for handling internal rwelf data
@@ -173,5 +190,12 @@ extern const unsigned char *rwelf_get_symbol_name(const Elf_Sym*);
 extern const unsigned char *rwelf_get_symbol_section(const Elf_Sym*);
 extern uint64_t rwelf_get_symbol_size(const Elf_Sym*);
 extern uint64_t rwelf_get_symbol_value(const Elf_Sym*);
+
+/**
+ * Elf_Dyn related functions
+ */
+extern void rwelf_get_dynamic_by_num(const rwelf*, size_t, Elf_Dyn*);
+extern int64_t rwelf_get_dynamic_tag(const Elf_Dyn*);
+extern const char *rwelf_get_dynamic_tag_name(const Elf_Dyn*);
 
 #endif /* RWELF_H */

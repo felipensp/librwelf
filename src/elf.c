@@ -66,6 +66,18 @@ static void inline _find_str_tables(rwelf *elf)
 				elf->nsyms = ELF_SHDR(elf, sh_size, i) / 
 					ELF_SHDR(elf, sh_entsize, i);
 				break;
+			case SHT_DYNAMIC:
+				if (ELF_IS_32(elf)) {
+					DYN32(elf) = (Elf32_Dyn*)(elf->file + 
+						ELF_SHDR(elf, sh_offset, i));
+				} else {
+					DYN64(elf) = (Elf64_Dyn*)(elf->file +
+						ELF_SHDR(elf, sh_offset, i));
+				}
+				/* Save the number of symbols */
+				elf->ndyns = ELF_SHDR(elf, sh_size, i) / 
+					ELF_SHDR(elf, sh_entsize, i);
+				break;
 		}
 	}
 }

@@ -32,6 +32,7 @@ int main(int argc, char **argv) {
 	Elf_Shdr sec;
 	Elf_Sym sym;
 	Elf_Phdr phdr;
+	Elf_Dyn dyn;
 	rwelf *elf = rwelf_open("./librwelf.so");
 	
 	if (!elf) {
@@ -69,6 +70,9 @@ int main(int argc, char **argv) {
 	
 	rwelf_get_pheader_by_num(elf, 2, &phdr);
 	printf("%s found!\n", rwelf_get_pheader_type_name(&phdr));
+	
+	rwelf_get_dynamic_by_num(elf, 1, &dyn);
+	printf("%s found!\n", rwelf_get_dynamic_tag_name(&dyn));
 
 	rwelf_close(elf);
 
