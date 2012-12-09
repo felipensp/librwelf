@@ -112,8 +112,8 @@ typedef struct {
 	rwelf_ehdr ehdr;	
 	rwelf_phdr phdr;	
 	rwelf_shdr shdr;                 
-	rwelf_sym   sym;          /* .symtab section */
-	rwelf_dyn   dyn;          /* .dynamic section */
+	rwelf_sym  sym;           /* .symtab section */
+	rwelf_dyn  dyn;           /* .dynamic section */
 	rwelf_sym  dynsym;        /* .dynsym section */
 	size_t nsyms;             /* Number of symbols on .symtab */
 	size_t ndyns;             /* Number of entries on .dynamic */
