@@ -62,7 +62,7 @@ static void inline _find_str_tables(rwelf *elf)
 					SYM64(elf) = (Elf64_Sym*)(elf->file +
 						ELF_SHDR(elf, sh_offset, i));
 				}
-				
+				/* Save the number of symbols */
 				elf->nsyms = ELF_SHDR(elf, sh_size, i) / 
 					ELF_SHDR(elf, sh_entsize, i);
 				break;
