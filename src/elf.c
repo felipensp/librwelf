@@ -57,12 +57,12 @@ static void inline _find_str_tables(rwelf *elf)
 	
 	/* Symbol name string table */
 	if (rwelf_get_section_by_name(elf, ".strtab", &shdr) != -1) {
-		elf->symstrtab = elf->file + SHDR_DATA(&shdr, sh_offset);
+		elf->strtab = elf->file + SHDR_DATA(&shdr, sh_offset);
 	}
 	
 	/* Dynamic string table */
 	if (rwelf_get_section_by_name(elf, ".dynstr", &shdr) != -1) {
-		elf->dynstrtab = elf->file + SHDR_DATA(&shdr, sh_offset);
+		elf->dynstr = elf->file + SHDR_DATA(&shdr, sh_offset);
 	}
 	
 	/* Dynamic symbol table */

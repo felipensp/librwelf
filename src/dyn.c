@@ -80,14 +80,14 @@ const unsigned char *rwelf_get_dynamic_strval(const Elf_Dyn *dyn)
 {
 	assert(dyn != NULL);
 	assert(dyn->elf != NULL);
-	assert(dyn->elf->dynstrtab != NULL);
+	assert(dyn->elf->dynstr != NULL);
 	
 	switch (DYN_DATA(dyn, d_tag)) {
 		case DT_SONAME:  /* Shared library name */
 		case DT_NEEDED:  /* Needed library */
 		case DT_RPATH:   /* RPATH */
 		case DT_RUNPATH: /* Library search path */
-			return dyn->elf->dynstrtab + DYN_DATA(dyn, d_un.d_val);
+			return dyn->elf->dynstr + DYN_DATA(dyn, d_un.d_val);
 		default:
 			return NULL;
 	}

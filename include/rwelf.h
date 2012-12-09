@@ -119,9 +119,9 @@ typedef struct {
 	size_t ndyns;             /* Number of entries on .dynamic */
 	size_t ndynsyms;          /* Number of symbols on .dynsym */
 	
-	unsigned char *dynstrtab; /* Dynamic string table (.dynstr) */
+	unsigned char *dynstr;    /* Dynamic string table (.dynstr) */
 	unsigned char *shstrtab;  /* Section name string table (.shstrtab) */
-	unsigned char *symstrtab; /* Symbol name string table (.strtab) */
+	unsigned char *strtab;    /* Symbol name string table (.strtab) */
 } rwelf;
 
 /**

@@ -64,11 +64,11 @@ int rwelf_get_symbol_by_name(const rwelf *elf, const char *sname,
 	int i;
 	
 	assert(elf != NULL);
-	assert(elf->symstrtab != NULL);
+	assert(elf->strtab != NULL);
 	assert(sname != NULL);
 	
 	for (i = 0; i < elf->nsyms; ++i) {
-		const char *name = (char*)(elf->symstrtab + ELF_SYM(elf, st_name, i));
+		const char *name = (char*)(elf->strtab + ELF_SYM(elf, st_name, i));
 		
 		if (name && memcmp(name, sname, strlen(name)+1) == 0) {
 			if (sym) {
@@ -90,7 +90,7 @@ const unsigned char *rwelf_get_symbol_name(const Elf_Sym *sym)
 	assert(sym != NULL);
 	assert(sym->elf != NULL);
 	
-	return sym->elf->symstrtab + SYM_DATA(sym, st_name);
+	return sym->elf->strtab + SYM_DATA(sym, st_name);
 }
 
 /**
@@ -149,7 +149,7 @@ uint64_t rwelf_get_symbol_value(const Elf_Sym *sym)
 void rwelf_get_dyn_symbol_by_num(const rwelf *elf, size_t n, Elf_Sym *sym)
 {
 	assert(elf != NULL);
-	assert(elf->dynstrtab != NULL);
+	assert(elf->dynstr != NULL);
 	
 	sym->elf = elf;
 	_copy_sym(1, elf, sym, n);
@@ -163,7 +163,7 @@ const unsigned char *rwelf_get_dyn_symbol_name(const Elf_Sym *sym)
 {
 	assert(sym != NULL);
 	assert(sym->elf != NULL);
-	assert(sym->elf->dynstrtab != NULL);
+	assert(sym->elf->dynstr != NULL);
 	
-	return sym->elf->dynstrtab + SYM_DATA(sym, st_name);
+	return sym->elf->dynstr + SYM_DATA(sym, st_name);
 }
