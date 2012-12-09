@@ -76,6 +76,12 @@ int main(int argc, char **argv) {
 			rwelf_get_dynamic_tag_name(&dyn),
 			rwelf_get_dynamic_strval(&dyn));
 	}
+	
+	num_symbols = rwelf_num_dyn_symbols(elf);	
+	for (i = 0; i < num_symbols; ++i) {
+		rwelf_get_dyn_symbol_by_num(elf, i, &sym);
+		printf("%s\n", rwelf_get_dyn_symbol_name(&sym));
+	}
 
 	rwelf_close(elf);
 

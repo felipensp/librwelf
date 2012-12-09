@@ -50,6 +50,8 @@
 #define SYM64(_elf)  RWELF_DATA(_elf,  sym, _64)
 #define DYN32(_elf)  RWELF_DATA(_elf,  dyn, _32)
 #define DYN64(_elf)  RWELF_DATA(_elf,  dyn, _64)
+#define DYNSYM32(_elf)  RWELF_DATA(_elf,  dynsym, _32)
+#define DYNSYM64(_elf)  RWELF_DATA(_elf,  dynsym, _64)
 
 #define ELF_IS_32(_elf) (_elf->class == ELFCLASS32)
 #define ELF_IS_64(_elf) (_elf->class == ELFCLASS64)
@@ -112,8 +114,10 @@ typedef struct {
 	rwelf_shdr shdr;                 
 	rwelf_sym   sym;          /* .symtab section */
 	rwelf_dyn   dyn;          /* .dynamic section */
+	rwelf_sym  dynsym;        /* .dynsym section */
 	size_t nsyms;             /* Number of symbols on .symtab */
 	size_t ndyns;             /* Number of entries on .dynamic */
+	size_t ndynsyms;          /* Number of symbols on .dynsym */
 	
 	unsigned char *dynstrtab; /* Dynamic string table (.dynstr) */
 	unsigned char *shstrtab;  /* Section name string table (.shstrtab) */
@@ -195,6 +199,10 @@ extern const unsigned char *rwelf_get_symbol_name(const Elf_Sym*);
 extern const unsigned char *rwelf_get_symbol_section(const Elf_Sym*);
 extern uint64_t rwelf_get_symbol_size(const Elf_Sym*);
 extern uint64_t rwelf_get_symbol_value(const Elf_Sym*);
+extern uint16_t rwelf_num_dyn_symbols(const rwelf*);
+
+extern void rwelf_get_dyn_symbol_by_num(const rwelf*, size_t, Elf_Sym*);
+extern const unsigned char *rwelf_get_dyn_symbol_name(const Elf_Sym*);
 
 /**
  * Elf_Dyn related functions

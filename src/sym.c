@@ -26,16 +26,19 @@
 #include "rwelf.h"
 #include <string.h>
 
-static void inline _copy_sym(const rwelf *elf, Elf_Sym *sym, size_t n)
+static void inline _copy_sym(int is_dynamic, const rwelf *elf,
+	Elf_Sym *sym, size_t n)
 {
 	sym->elf = elf;
 
 	if (ELF_IS_32(elf)) {
-		SYM32(sym) = SYM32(elf) + n;
+		SYM32(sym) = (is_dynamic ? DYNSYM32(elf) : SYM32(elf)) + n;
 	} else if (ELF_IS_64(elf)) {
-		SYM64(sym) = SYM64(elf) + n;
+		SYM64(sym) = (is_dynamic ? DYNSYM64(elf) : SYM64(elf)) + n;
 	}
 }
+
+/* .symtab symbols */
 
 /**
  * rwelf_get_symbol_by_num(const rwelf*, size_t, Elf_Sym*)
@@ -47,7 +50,7 @@ void rwelf_get_symbol_by_num(const rwelf *elf, size_t num, Elf_Sym *sym)
 	assert(elf->nsyms > num);
 	
 	if (sym) {
-		_copy_sym(elf, sym, num);
+		_copy_sym(0, elf, sym, num);
 	}
 }
 
@@ -69,7 +72,7 @@ int rwelf_get_symbol_by_name(const rwelf *elf, const char *sname,
 		
 		if (name && memcmp(name, sname, strlen(name)+1) == 0) {
 			if (sym) {
-				_copy_sym(elf, sym, i);
+				_copy_sym(0, elf, sym, i);
 			}
 			return i;
 		}
@@ -128,4 +131,31 @@ uint64_t rwelf_get_symbol_value(const Elf_Sym *sym)
 	assert(sym->elf != NULL);
 	
 	return SYM_DATA(sym, st_value);	
+}
+
+/* .dynsym symbols */
+
+/**
+ * rwelf_get_dyn_symbol_by_num()
+ */
+void rwelf_get_dyn_symbol_by_num(const rwelf *elf, size_t n, Elf_Sym *sym)
+{
+	assert(elf != NULL);
+	assert(elf->dynstrtab != NULL);
+	
+	sym->elf = elf;
+	_copy_sym(1, elf, sym, n);
+}
+
+/**
+ * rwelf_get_symbol_name(const Elf_Sym*)
+ * Returns the symbol name for an specific symbol
+ */
+const unsigned char *rwelf_get_dyn_symbol_name(const Elf_Sym *sym)
+{
+	assert(sym != NULL);
+	assert(sym->elf != NULL);
+	assert(sym->elf->dynstrtab != NULL);
+	
+	return sym->elf->dynstrtab + SYM_DATA(sym, st_name);
 }

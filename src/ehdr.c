@@ -124,6 +124,17 @@ uint16_t rwelf_num_symbols(const rwelf *elf)
 }
 
 /**
+ * rwelf_num_dyn_symbols(const rwelf*)
+ * Returns the number of dynamic symbols in the .dynsym section
+ */
+uint16_t rwelf_num_dyn_symbols(const rwelf *elf)
+{
+	assert(elf != NULL);
+	
+	return elf->ndynsyms;
+}
+
+/**
  * rwelf_entry(const rwelf *elf)
  * Returns the virtual address of entry point
  */ 
