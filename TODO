@@ -1,0 +1,12 @@
+TODO
+------------------------------------------------------------------------
+
+Library:
+
+- Change ehdr functions to use Elf_Ehdr instead of rwelf
+- Write the writer part of the library
+
+
+tools/rwelf:
+
+- Add options to the program, just like readelf options.
