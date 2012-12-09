@@ -46,7 +46,9 @@ void rwelf_get_symbol_by_num(const rwelf *elf, size_t num, Elf_Sym *sym)
 	assert(elf != NULL);
 	assert(elf->nsyms > num);
 	
-	_copy_sym(elf, sym, num);	
+	if (sym) {
+		_copy_sym(elf, sym, num);
+	}
 }
 
 /**
