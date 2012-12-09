@@ -60,6 +60,7 @@
 #define ELF_SHDR(_elf, _field, _n) RWELFN(_elf, shdr, _field, _n)
 #define ELF_PHDR(_elf, _field, _n) RWELFN(_elf, phdr, _field, _n)
 #define ELF_SYM(_elf,  _field, _n) RWELFN(_elf,  sym, _field, _n)
+#define ELF_DYN(_elf, _field, _n)  RWELFN(_elf,  dyn, _field, _n)
 
 #define SHDR_DATA(_shdr, _field) \
 	(ELF_IS_64(_shdr->elf) ? SHDR64(_shdr)->_field : SHDR32(_shdr)->_field)
@@ -111,6 +112,7 @@ typedef struct {
 	size_t nsyms;             /* Number of symbols on .symtab */
 	size_t ndyns;             /* Number of entries on .dynamic */
 	
+	unsigned char *dynstrtab; /* Dynamic string table (.dynstr) */
 	unsigned char *shstrtab;  /* Section name string table (.shstrtab) */
 	unsigned char *symstrtab; /* Symbol name string table (.strtab) */
 } rwelf;
@@ -197,5 +199,7 @@ extern uint64_t rwelf_get_symbol_value(const Elf_Sym*);
 extern void rwelf_get_dynamic_by_num(const rwelf*, size_t, Elf_Dyn*);
 extern int64_t rwelf_get_dynamic_tag(const Elf_Dyn*);
 extern const char *rwelf_get_dynamic_tag_name(const Elf_Dyn*);
+extern const unsigned char *rwelf_get_dynamic_strval(const Elf_Dyn*);
+extern int rwelf_get_dynamic_by_tag(const rwelf*, int64_t, Elf_Dyn*);
 
 #endif /* RWELF_H */

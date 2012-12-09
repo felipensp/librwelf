@@ -41,12 +41,53 @@ static void inline _copy_dyn(const rwelf *elf, Elf_Dyn *dyn, size_t n)
  * Finds the dynamic entry by specified number and fill the out param with
  * the entry
  */
-void rwelf_get_dynamic_by_num(const rwelf* elf, size_t num, Elf_Dyn *dyn)
+void rwelf_get_dynamic_by_num(const rwelf *elf, size_t num, Elf_Dyn *dyn)
 {
 	assert(elf != NULL);
 	
 	if (dyn) {
 		_copy_dyn(elf, dyn, num);
+	}
+}
+
+/**
+ * rwelf_get_dynamic_by_tag(const rwelf*, int64_t, Elf_Dyn*)
+ * Finds the .dynamic entry by tag and fill the out param with it when
+ * found and return its position, otherwise -1 is returned
+ */
+int rwelf_get_dynamic_by_tag(const rwelf *elf, int64_t tag, Elf_Dyn *dyn)
+{
+	int i;
+
+	assert(elf != NULL);
+	
+	for (i = 0; i < elf->ndyns; ++i) {
+		if (ELF_DYN(elf, d_tag, i) == tag) {
+			if (dyn) {
+				_copy_dyn(elf, dyn, i);
+			}
+			return i;
+		}
+	}
+	return -1;
+}
+
+const unsigned char *rwelf_get_dynamic_strval(const Elf_Dyn *dyn)
+{
+	uint64_t val;
+
+	assert(dyn != NULL);
+	assert(dyn->elf != NULL);
+	assert(dyn->elf->dynstrtab != NULL);
+	
+	switch (DYN_DATA(dyn, d_tag)) {
+		case DT_SONAME:
+			val = ELF_IS_64(dyn->elf) ? DYN64(dyn)->d_un.d_val
+				: DYN32(dyn)->d_un.d_val;
+			
+			return dyn->elf->dynstrtab + val;
+		default:
+			return NULL;
 	}
 }
 

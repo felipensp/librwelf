@@ -46,11 +46,21 @@ static void inline _find_str_tables(rwelf *elf)
 	for (i = 0; i < ELF_EHDR(elf, e_shnum); ++i) {
 		switch (ELF_SHDR(elf, sh_type, i)) {
 			case SHT_STRTAB:
-				if (ELF_SHDR(elf, sh_flags, i) == 0
-					&& ELF_EHDR(elf, e_shstrndx) != i) {
-					/* Symbol name string table */
-					elf->symstrtab = elf->file + 
-						ELF_SHDR(elf, sh_offset, i);
+				if (ELF_EHDR(elf, e_shstrndx) != i) {
+					const unsigned char *name = elf->shstrtab +
+						ELF_SHDR(elf, sh_name, i);
+					
+					if (ELF_SHDR(elf, sh_flags, i) == 0 
+						&& !memcmp(name, ".strtab", sizeof(".strtab"))) {
+						/* Symbol name string table */
+						elf->symstrtab = elf->file + 
+							ELF_SHDR(elf, sh_offset, i);
+					} else if (ELF_SHDR(elf, sh_flags, i) != 0
+						&& !memcmp(name, ".dynstr", sizeof(".dynstr"))) {
+						/* Dynamic string table */
+						elf->dynstrtab = elf->file + 
+							ELF_SHDR(elf, sh_offset, i);
+					}
 				}
 				break;
 			case SHT_SYMTAB:

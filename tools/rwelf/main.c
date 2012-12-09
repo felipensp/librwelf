@@ -71,8 +71,11 @@ int main(int argc, char **argv) {
 	rwelf_get_pheader_by_num(elf, 2, &phdr);
 	printf("%s found!\n", rwelf_get_pheader_type_name(&phdr));
 	
-	rwelf_get_dynamic_by_num(elf, 1, &dyn);
-	printf("%s found!\n", rwelf_get_dynamic_tag_name(&dyn));
+	if (rwelf_get_dynamic_by_tag(elf, DT_SONAME, &dyn) != -1) {
+		printf("%s found, %s!\n",
+			rwelf_get_dynamic_tag_name(&dyn),
+			rwelf_get_dynamic_strval(&dyn));
+	}
 
 	rwelf_close(elf);
 
