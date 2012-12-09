@@ -4,7 +4,8 @@
 
 int main(int argc, char **argv) {
 	int i, num_sections, num_symbols;
-	Elf_Shdr dynstr;
+	Elf_Shdr sec;
+	Elf_Sym sym;
 	rwelf *elf = rwelf_open("./librwelf.so");
 	
 	if (!elf) {
@@ -19,20 +20,23 @@ int main(int argc, char **argv) {
 	printf("Entry:    %p\n", rwelf_entry(elf));
 	
 	num_sections = rwelf_num_sections(elf);
-	for (i = 0; i < num_sections; ++i) {
-		Elf_Shdr sec;
-		
+	for (i = 0; i < num_sections; ++i) {		
 		rwelf_get_section_by_num(elf, i, &sec);
 		printf("Section: %s\n", rwelf_get_section_name(&sec));
 	}
 	
 	num_symbols = rwelf_num_symbols(elf);
 	for (i = 0; i < num_symbols; ++i) {
-		printf("Symbol: %s\n", rwelf_symbol_name(elf, i));
+		rwelf_get_symbol_by_num(elf, i, &sym);
+		printf("Symbol: %s\n", rwelf_get_symbol_name(&sym));
 	}
 	
-	if (rwelf_get_section_by_name(elf, ".dynstr", &dynstr)) {
-		printf("%s found!\n", rwelf_get_section_name(&dynstr));
+	if (rwelf_get_section_by_name(elf, ".dynstr", &sec)) {
+		printf("Section %s found!\n", rwelf_get_section_name(&sec));
+	}
+	
+	if (rwelf_get_symbol_by_name(elf, "rwelf_type", &sym)) {
+		printf("Symbol %s found!\n", rwelf_get_symbol_name(&sym));
 	}
 
 	rwelf_close(elf);

@@ -62,6 +62,10 @@
 #define SHDR_DATA(_shdr, _field) \
 	(ELF_IS_64(_shdr->elf) ? SHDR64(_shdr)->_field : SHDR32(_shdr)->_field)
 
+#define SYM_DATA(_sym, _field) \
+	(ELF_IS_64(_sym->elf) ? SYM64(_sym)->_field : SYM32(_sym)->_field)
+	
+
 typedef union {
 	Elf32_Shdr *_32;
 	Elf64_Shdr *_64;
@@ -115,6 +119,11 @@ typedef struct {
 	rwelf_ehdr data;
 } Elf_Ehdr;
 
+typedef struct {
+	const rwelf *elf;
+	rwelf_sym sym;
+} Elf_Sym;
+
 /**
  * Functions for handling internal rwelf data
  */
@@ -145,8 +154,10 @@ extern uintptr_t rwelf_get_section_addr(const Elf_Shdr*);
 extern size_t rwelf_get_section_size(const Elf_Shdr*);
 
 /**
- * ElfN_Sym related functions
+ * Elf_Sym related functions
  */
-extern const unsigned char *rwelf_symbol_name(const rwelf*, size_t);
+extern void rwelf_get_symbol_by_num(const rwelf*, size_t, Elf_Sym*);
+extern int rwelf_get_symbol_by_name(const rwelf*, const char*, Elf_Sym*);
+extern const unsigned char *rwelf_get_symbol_name(const Elf_Sym*);
 
 #endif /* RWELF_H */

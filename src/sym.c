@@ -24,23 +24,67 @@
  */
 
 #include "rwelf.h"
-#include <stdio.h>
+#include <string.h>
+
+static void inline _copy_sym(const rwelf *elf, Elf_Sym *sym, size_t n)
+{
+	sym->elf = elf;
+
+	if (ELF_IS_32(elf)) {
+		SYM32(sym) = SYM32(elf) + n;
+	} else if (ELF_IS_64(elf)) {
+		SYM64(sym) = SYM64(elf) + n;
+	}
+}
 
 /**
- * rwelf_symbol_name(const rwelf*, size_t)
- * Returns the symbol name for an specific symbol
+ * rwelf_get_symbol_by_num(const rwelf*, size_t, Elf_Sym*)
+ * Finds the symbol by number and fill the sym param with related symbol
  */
-const unsigned char *rwelf_symbol_name(const rwelf *elf, size_t num)
+void rwelf_get_symbol_by_num(const rwelf *elf, size_t num, Elf_Sym *sym)
 {
 	assert(elf != NULL);
+	assert(elf->nsyms > num);
 	
-	if (((ELF_IS_32(elf) && SYM32(elf) == NULL)
-		|| (ELF_IS_64(elf) && SYM64(elf) == NULL))
-		|| elf->nsyms < num
-		|| ELF_SYM(elf, st_name, num) == 0) {
-		return NULL;
-	}
+	_copy_sym(elf, sym, num);	
+}
+
+/**
+ * rwelf_get_symbol_by_name(const rwelf *elf, const char *sname, Elf_Sym *sym)
+ * Returns the position of the symbol if found, otherwise -1 is returned
+ */
+int rwelf_get_symbol_by_name(const rwelf *elf, const char *sname, 
+	Elf_Sym *sym)
+{
+	int i;
 	
-	return elf->symstrtab + ELF_SYM(elf, st_name, num);
+	assert(elf != NULL);
+	assert(elf->symstrtab != NULL);
+	assert(sname != NULL);
+	
+	for (i = 0; i < elf->nsyms; ++i) {
+		const char *name = (char*)(elf->symstrtab + ELF_SYM(elf, st_name, i));
+		
+		if (name && memcmp(name, sname, strlen(name)+1) == 0) {
+			if (sym) {
+				_copy_sym(elf, sym, i);
+			}
+			return i;
+		}
+	}	
+	
+	return -1;
+}
+
+/**
+ * rwelf_get_symbol_name(const Elf_Sym*)
+ * Returns the symbol name for an specific symbol
+ */
+const unsigned char *rwelf_get_symbol_name(const Elf_Sym *sym)
+{
+	assert(sym != NULL);
+	assert(sym->elf != NULL);
+	
+	return sym->elf->symstrtab + SYM_DATA(sym, st_name);
 }
 

@@ -49,6 +49,7 @@ int rwelf_get_section_by_name(const rwelf *elf, const char *sname, Elf_Shdr *shd
 	
 	assert(elf != NULL);
 	assert(elf->shstrtab != NULL);
+	assert(sname != NULL);
 	
 	for (i = 0; i < ELF_EHDR(elf, e_shnum); ++i) {
 		const char *name = (char*)(elf->shstrtab + ELF_SHDR(elf, sh_name, i));
@@ -64,8 +65,9 @@ int rwelf_get_section_by_name(const rwelf *elf, const char *sname, Elf_Shdr *shd
 }
 
 /**
- * rwelf_section_by_num(const rwelf *elf, size_t shnum)
- * Returns the name of the specified section
+ * rwelf_section_by_num(const rwelf *elf, size_t num, Elf_Shdr *shdr)
+ * Finds the section by number and fills the shdr with the related
+ * section
  */
 void rwelf_get_section_by_num(const rwelf *elf,
 	size_t num, Elf_Shdr *shdr)
