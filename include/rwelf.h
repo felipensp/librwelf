@@ -150,7 +150,7 @@ extern int rwelf_get_section_by_name(const rwelf*, const char*, Elf_Shdr*);
 extern const unsigned char *rwelf_get_section_name(const Elf_Shdr*);
 extern uint32_t rwelf_get_section_type(const Elf_Shdr*);
 extern uint64_t rwelf_get_section_flags(const Elf_Shdr*);
-extern uintptr_t rwelf_get_section_addr(const Elf_Shdr*);
+extern uint64_t rwelf_get_section_addr(const Elf_Shdr*);
 extern uint64_t rwelf_get_section_size(const Elf_Shdr*);
 
 /**

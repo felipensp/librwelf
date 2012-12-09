@@ -122,7 +122,7 @@ uint64_t rwelf_get_section_flags(const Elf_Shdr *shdr)
  * Returns the section address if it appears in the memory image of 
  * process
  */
-uintptr_t rwelf_get_section_addr(const Elf_Shdr *shdr)
+uint64_t rwelf_get_section_addr(const Elf_Shdr *shdr)
 {
 	assert(shdr != NULL);
 	assert(shdr->elf != NULL);
