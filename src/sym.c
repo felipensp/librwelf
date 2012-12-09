@@ -90,3 +90,19 @@ const unsigned char *rwelf_get_symbol_name(const Elf_Sym *sym)
 	return sym->elf->symstrtab + SYM_DATA(sym, st_name);
 }
 
+/**
+ * rewlf_get_symbol_section(const Elf_Sym*)
+ * Returns the section name related to the symbol
+ */
+const unsigned char *rwelf_get_symbol_section(const Elf_Sym *sym)
+{
+	Elf_Shdr shdr;
+
+	assert(sym != NULL);
+	assert(sym->elf != NULL);
+
+	rwelf_get_section_by_num(sym->elf, SYM_DATA(sym, st_shndx), &shdr);
+	
+	return rwelf_get_section_name(&shdr);
+}
+

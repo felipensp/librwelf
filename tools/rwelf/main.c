@@ -36,7 +36,9 @@ int main(int argc, char **argv) {
 	}
 	
 	if (rwelf_get_symbol_by_name(elf, "rwelf_type", &sym) != -1) {
-		printf("Symbol %s found!\n", rwelf_get_symbol_name(&sym));
+		printf("Symbol %s found, section %s!\n",
+			rwelf_get_symbol_name(&sym),
+			rwelf_get_symbol_section(&sym));
 	}
 
 	rwelf_close(elf);

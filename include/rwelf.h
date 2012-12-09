@@ -159,5 +159,6 @@ extern size_t rwelf_get_section_size(const Elf_Shdr*);
 extern void rwelf_get_symbol_by_num(const rwelf*, size_t, Elf_Sym*);
 extern int rwelf_get_symbol_by_name(const rwelf*, const char*, Elf_Sym*);
 extern const unsigned char *rwelf_get_symbol_name(const Elf_Sym*);
+extern const unsigned char *rwelf_get_symbol_section(const Elf_Sym*);
 
 #endif /* RWELF_H */
