@@ -88,9 +88,7 @@ const unsigned char *rwelf_get_section_name(const Elf_Shdr *shdr)
 	assert(shdr != NULL);
 	assert(shdr->elf != NULL);
 	
-	return shdr->elf->shstrtab + 
-		(ELF_IS_64(shdr->elf) ? SHDR64(shdr)->sh_name
-			: SHDR32(shdr)->sh_name);
+	return shdr->elf->shstrtab + SHDR_DATA(shdr, sh_name);
 }
 
 /**
@@ -102,11 +100,5 @@ int rwelf_get_section_type(const Elf_Shdr *shdr)
 	assert(shdr != NULL);
 	assert(shdr->elf != NULL);
 	
-	if (ELF_IS_32(shdr->elf)) {
-		return SHDR32(shdr)->sh_type;
-	} else if (ELF_IS_64(shdr->elf)) {
-		return SHDR64(shdr)->sh_type;
-	}
-
-	return -1;
+	return SHDR_DATA(shdr, sh_type);
 }

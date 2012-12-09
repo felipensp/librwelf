@@ -59,6 +59,9 @@
 #define ELF_PHDR(_elf, _field, _n) RWELFN(_elf, phdr, _field, _n)
 #define ELF_SYM(_elf,  _field, _n) RWELFN(_elf,  sym, _field, _n)
 
+#define SHDR_DATA(_shdr, _field) \
+	(ELF_IS_64(_shdr->elf) ? _shdr->shdr._64->_field : _shdr->shdr._32->_field)
+
 typedef union {
 	Elf32_Shdr *_32;
 	Elf64_Shdr *_64;
