@@ -4,9 +4,10 @@ TODO
 Library:
 
 - Change ehdr functions to use Elf_Ehdr instead of rwelf
-- Write the writer part of the library
+- Implement the writer part of the API (static)
+- Implement write/read API for memory image of process (ptrace)
 
 
 tools/rwelf:
 
-- Add options to the program, just like readelf options.
+- Add options to the program, just like readelf options
