@@ -151,8 +151,8 @@ typedef struct {
 /**
  * Functions for handling internal rwelf data
  */
-extern rwelf *rwelf_open(const char *);
-extern void rwelf_close(rwelf *);
+extern rwelf *rwelf_open(const char*);
+extern void rwelf_close(rwelf*);
 
 /**
  * ElfN_Ehdr related functions 
