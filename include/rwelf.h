@@ -111,12 +111,12 @@ typedef struct {
 
 typedef struct {
 	const rwelf *elf;
-	rwelf_phdr data;
+	rwelf_phdr phdr;
 } Elf_Phdr;
 
 typedef struct {
 	const rwelf *elf;
-	rwelf_ehdr data;
+	rwelf_ehdr ehdr;
 } Elf_Ehdr;
 
 typedef struct {
@@ -152,6 +152,11 @@ extern uint32_t rwelf_get_section_type(const Elf_Shdr*);
 extern uint64_t rwelf_get_section_flags(const Elf_Shdr*);
 extern uint64_t rwelf_get_section_addr(const Elf_Shdr*);
 extern uint64_t rwelf_get_section_size(const Elf_Shdr*);
+
+/**
+ * Elf_Phdr related functions
+ */
+extern void rwelf_get_pheader_by_num(const rwelf*, size_t, Elf_Phdr*);
 
 /**
  * Elf_Sym related functions
