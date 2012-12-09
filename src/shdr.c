@@ -46,15 +46,18 @@ static void inline _copy_shdr(const rwelf *elf, Elf_Shdr *shdr, size_t n)
 int rwelf_get_section_by_name(const rwelf *elf, const char *sname, Elf_Shdr *shdr)
 {
 	int i;
+	size_t len;
 	
 	assert(elf != NULL);
 	assert(elf->shstrtab != NULL);
 	assert(sname != NULL);
 	
+	len = strlen(sname);
+	
 	for (i = 0; i < ELF_EHDR(elf, e_shnum); ++i) {
 		const char *name = (char*)(elf->shstrtab + ELF_SHDR(elf, sh_name, i));
 		
-		if (name && memcmp(name, sname, strlen(name)+1) == 0) {
+		if (name && memcmp(name, sname, len+1) == 0) {
 			if (shdr) {
 				_copy_shdr(elf, shdr, i);
 			}
