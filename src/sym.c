@@ -103,8 +103,16 @@ const unsigned char *rwelf_get_symbol_section(const Elf_Sym *sym)
 
 	assert(sym != NULL);
 	assert(sym->elf != NULL);
-
-	rwelf_get_section_by_num(sym->elf, SYM_DATA(sym, st_shndx), &shdr);
+	
+	switch (SYM_DATA(sym, st_shndx)) {
+		case SHN_ABS:
+		case SHN_COMMON:
+		case SHN_UNDEF:
+			return NULL;
+		default:
+			rwelf_get_section_by_num(sym->elf, SYM_DATA(sym, st_shndx), &shdr);
+			break;
+	}
 	
 	return rwelf_get_section_name(&shdr);
 }

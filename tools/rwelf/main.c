@@ -80,7 +80,9 @@ int main(int argc, char **argv) {
 	num_symbols = rwelf_num_dyn_symbols(elf);	
 	for (i = 0; i < num_symbols; ++i) {
 		rwelf_get_dyn_symbol_by_num(elf, i, &sym);
-		printf("%s\n", rwelf_get_dyn_symbol_name(&sym));
+		printf("%s [%s]\n",
+			rwelf_get_dyn_symbol_name(&sym),
+			rwelf_get_symbol_section(&sym));
 	}
 
 	rwelf_close(elf);
