@@ -38,7 +38,7 @@ static void inline _find_str_tables(rwelf *elf)
 {
 	Elf_Shdr shdr;
 	
-	/* String table for section names */
+	/* String table for section names (.shstrtab) */
 	elf->shstrtab = elf->file +
 		ELF_SHDR(elf, sh_offset, ELF_EHDR(elf, e_shstrndx));
 
