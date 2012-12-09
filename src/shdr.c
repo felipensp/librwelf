@@ -97,7 +97,7 @@ const unsigned char *rwelf_get_section_name(const Elf_Shdr *shdr)
  * rwelf_get_section_type(const Elf_Shdr*)
  * Returns the section type
  */
-int rwelf_get_section_type(const Elf_Shdr *shdr)
+uint32_t rwelf_get_section_type(const Elf_Shdr *shdr)
 {
 	assert(shdr != NULL);
 	assert(shdr->elf != NULL);
@@ -109,7 +109,7 @@ int rwelf_get_section_type(const Elf_Shdr *shdr)
  * rwelf_get_section_flags(const Elf_Shdr*)
  * Returns the section flags
  */
-int rwelf_get_section_flags(const Elf_Shdr *shdr)
+uint64_t rwelf_get_section_flags(const Elf_Shdr *shdr)
 {
 	assert(shdr != NULL);
 	assert(shdr->elf != NULL);
@@ -134,7 +134,7 @@ uintptr_t rwelf_get_section_addr(const Elf_Shdr *shdr)
  * rwelf_get_section_size(const Elf_Shdr*)
  * Returns the section size in bytes
  */
-size_t rwelf_get_section_size(const Elf_Shdr *shdr)
+uint64_t rwelf_get_section_size(const Elf_Shdr *shdr)
 {
 	assert(shdr != NULL);
 	assert(shdr->elf != NULL);

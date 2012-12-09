@@ -106,3 +106,26 @@ const unsigned char *rwelf_get_symbol_section(const Elf_Sym *sym)
 	return rwelf_get_section_name(&shdr);
 }
 
+/**
+ * rwelf_get_symbol_size(const Elf_Sym*)
+ * Returns the symbol size
+ */
+uint64_t rwelf_get_symbol_size(const Elf_Sym *sym)
+{
+	assert(sym != NULL);
+	assert(sym->elf != NULL);
+	
+	return SYM_DATA(sym, st_size);	
+}
+
+/**
+ * rwelf_get_symbol_value(const Elf_Sym*)
+ * Returns the symbol value
+ */
+uint64_t rwelf_get_symbol_value(const Elf_Sym *sym)
+{
+	assert(sym != NULL);
+	assert(sym->elf != NULL);
+	
+	return SYM_DATA(sym, st_value);	
+}

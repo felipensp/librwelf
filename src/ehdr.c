@@ -45,7 +45,7 @@ const char *rwelf_class(const rwelf *elf)
  * rwelf_version(const rwelf *)
  * Returns the version number of ELF specification
  */
-int rwelf_version(const rwelf *elf)
+uint32_t rwelf_version(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
@@ -94,7 +94,7 @@ const char *rwelf_type(const rwelf *elf)
  * rwelf_num_sections(const rwelf *elf)
  * Returns the number of entries on sections header table
  */
-size_t rwelf_num_sections(const rwelf *elf)
+uint16_t rwelf_num_sections(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
@@ -105,7 +105,7 @@ size_t rwelf_num_sections(const rwelf *elf)
  * rwelf_num_pheader(const rwelf *elf)
  * Returns the number of entries on program header table
  */
-size_t rwelf_num_pheaders(const rwelf *elf)
+uint16_t rwelf_num_pheaders(const rwelf *elf)
 {
 	assert(elf != NULL);
 
@@ -116,7 +116,7 @@ size_t rwelf_num_pheaders(const rwelf *elf)
  * rwelf_num_symbols(const rwelf*)
  * Returns the number of symbols in the symbol table
  */
-size_t rwelf_num_symbols(const rwelf *elf)
+uint16_t rwelf_num_symbols(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
@@ -127,7 +127,7 @@ size_t rwelf_num_symbols(const rwelf *elf)
  * rwelf_entry(const rwelf *elf)
  * Returns the virtual address of entry point
  */ 
-uintptr_t rwelf_entry(const rwelf *elf)
+uint64_t rwelf_entry(const rwelf *elf)
 {
 	assert(elf != NULL);
 	
