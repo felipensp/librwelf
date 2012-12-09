@@ -38,7 +38,7 @@
 #define NULL ((void*)0)
 #endif
 
-#define RWELF_DATA(_elf, _mem, _class) _elf->_mem._class
+#define RWELF_DATA(_elf, _mem, _class) (_elf)->_mem._class
 
 #define EHDR32(_elf) RWELF_DATA(_elf, ehdr, _32)
 #define EHDR64(_elf) RWELF_DATA(_elf, ehdr, _64)
@@ -68,16 +68,16 @@
 #define ELF_DYN(_elf, _field, _n)  RWELFN(_elf,  dyn, _field, _n)
 
 #define SHDR_DATA(_shdr, _field) \
-	(ELF_IS_64(_shdr->elf) ? SHDR64(_shdr)->_field : SHDR32(_shdr)->_field)
+	(ELF_IS_64((_shdr)->elf) ? SHDR64(_shdr)->_field : SHDR32(_shdr)->_field)
 
 #define SYM_DATA(_sym, _field) \
-	(ELF_IS_64(_sym->elf) ? SYM64(_sym)->_field : SYM32(_sym)->_field)
+	(ELF_IS_64((_sym)->elf) ? SYM64(_sym)->_field : SYM32(_sym)->_field)
 	
 #define PHDR_DATA(_sym, _field) \
-	(ELF_IS_64(_sym->elf) ? PHDR64(_sym)->_field : PHDR32(_sym)->_field)
+	(ELF_IS_64((_sym)->elf) ? PHDR64(_sym)->_field : PHDR32(_sym)->_field)
 	
 #define DYN_DATA(_dyn, _field) \
-	(ELF_IS_64(_dyn->elf) ? DYN64(_dyn)->_field : DYN32(_dyn)->_field)
+	(ELF_IS_64((_dyn)->elf) ? DYN64(_dyn)->_field : DYN32(_dyn)->_field)
 
 typedef union {
 	Elf32_Shdr *_32;

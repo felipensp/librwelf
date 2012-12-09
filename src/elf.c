@@ -36,71 +36,59 @@
  */
 static void inline _find_str_tables(rwelf *elf)
 {
-	int i;
+	Elf_Shdr shdr;
 	
 	/* String table for section names */
 	elf->shstrtab = elf->file +
 		ELF_SHDR(elf, sh_offset, ELF_EHDR(elf, e_shstrndx));
-	
-	/* Find the symbol string table and symtab */
-	for (i = 0; i < ELF_EHDR(elf, e_shnum); ++i) {
-		switch (ELF_SHDR(elf, sh_type, i)) {
-			case SHT_STRTAB:
-				if (ELF_EHDR(elf, e_shstrndx) != i) {
-					const unsigned char *name = elf->shstrtab +
-						ELF_SHDR(elf, sh_name, i);
-					
-					if (ELF_SHDR(elf, sh_flags, i) == 0 
-						&& !memcmp(name, ".strtab", sizeof(".strtab"))) {
-						/* Symbol name string table */
-						elf->symstrtab = elf->file + 
-							ELF_SHDR(elf, sh_offset, i);
-					} else if (ELF_SHDR(elf, sh_flags, i) != 0
-						&& !memcmp(name, ".dynstr", sizeof(".dynstr"))) {
-						/* Dynamic string table */
-						elf->dynstrtab = elf->file + 
-							ELF_SHDR(elf, sh_offset, i);
-					}
-				}
-				break;
-			case SHT_SYMTAB:
-				/* symtab section */
-				if (ELF_IS_32(elf)) {
-					SYM32(elf) = (Elf32_Sym*)(elf->file +
-						ELF_SHDR(elf, sh_offset, i));
-				} else {
-					SYM64(elf) = (Elf64_Sym*)(elf->file +
-						ELF_SHDR(elf, sh_offset, i));
-				}
-				/* Save the number of symbols */
-				elf->nsyms = ELF_SHDR(elf, sh_size, i) / 
-					ELF_SHDR(elf, sh_entsize, i);
-				break;
-			case SHT_DYNSYM:
-				if (ELF_IS_32(elf)) {
-					DYNSYM32(elf) = (Elf32_Sym*)(elf->file +
-						ELF_SHDR(elf, sh_offset, i));
-				} else {
-					DYNSYM64(elf) = (Elf64_Sym*)(elf->file +
-						ELF_SHDR(elf, sh_offset, i));					
-				}
-				/* Save the number of symbols */
-				elf->ndynsyms = ELF_SHDR(elf, sh_size, i) / 
-					ELF_SHDR(elf, sh_entsize, i);
-				break;
-			case SHT_DYNAMIC:
-				if (ELF_IS_32(elf)) {
-					DYN32(elf) = (Elf32_Dyn*)(elf->file + 
-						ELF_SHDR(elf, sh_offset, i));
-				} else {
-					DYN64(elf) = (Elf64_Dyn*)(elf->file +
-						ELF_SHDR(elf, sh_offset, i));
-				}
-				/* Save the number of symbols */
-				elf->ndyns = ELF_SHDR(elf, sh_size, i) / 
-					ELF_SHDR(elf, sh_entsize, i);
-				break;
+
+	/* Symbol table */
+	if (rwelf_get_section_by_name(elf, ".symtab", &shdr) != -1) {
+		if (ELF_IS_64(elf)) {
+			SYM64(elf) = (Elf64_Sym*)(elf->file + 
+				SHDR_DATA(&shdr, sh_offset));
+		} else {
+			SYM32(elf) = (Elf32_Sym*)(elf->file +
+				SHDR_DATA(&shdr, sh_offset));
 		}
+		elf->nsyms = SHDR_DATA(&shdr, sh_size) /
+			SHDR_DATA(&shdr, sh_entsize);
+	}
+	
+	/* Symbol name string table */
+	if (rwelf_get_section_by_name(elf, ".strtab", &shdr) != -1) {
+		elf->symstrtab = elf->file + SHDR_DATA(&shdr, sh_offset);
+	}
+	
+	/* Dynamic string table */
+	if (rwelf_get_section_by_name(elf, ".dynstr", &shdr) != -1) {
+		elf->dynstrtab = elf->file + SHDR_DATA(&shdr, sh_offset);
+	}
+	
+	/* Dynamic symbol table */
+	if (rwelf_get_section_by_name(elf, ".dynsym", &shdr) != -1) {
+		if (ELF_IS_32(elf)) {
+			DYNSYM32(elf) = (Elf32_Sym*)(elf->file +
+				SHDR_DATA(&shdr, sh_offset));
+		} else {
+			DYNSYM64(elf) = (Elf64_Sym*)(elf->file +
+				SHDR_DATA(&shdr, sh_offset));
+		}
+		elf->ndynsyms = SHDR_DATA(&shdr, sh_size) / 
+			SHDR_DATA(&shdr, sh_entsize);
+	}
+	
+	/* Dynamic section */
+	if (rwelf_get_section_by_name(elf, ".dynamic", &shdr) != -1) {
+		if (ELF_IS_32(elf)) {
+			DYN32(elf) = (Elf32_Dyn*)(elf->file + 
+				SHDR_DATA(&shdr, sh_offset));
+		} else {
+			DYN64(elf) = (Elf64_Dyn*)(elf->file +
+				SHDR_DATA(&shdr, sh_offset));
+		}
+		elf->ndyns = SHDR_DATA(&shdr, sh_size) / 
+			SHDR_DATA(&shdr, sh_entsize);
 	}
 }
 
