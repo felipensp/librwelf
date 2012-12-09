@@ -81,7 +81,7 @@ void rwelf_get_section_by_num(const rwelf *elf,
 
 /**
  * rwelf_get_section_name(const Elf_Shdr *shdr)
- * Returns the name of the supplied section
+ * Returns the name of section
  */
 const unsigned char *rwelf_get_section_name(const Elf_Shdr *shdr)
 {
@@ -92,8 +92,8 @@ const unsigned char *rwelf_get_section_name(const Elf_Shdr *shdr)
 }
 
 /**
- * rwelf_section_type(const rwelf *elf, size_t shnum)
- * Returns the section type of the specified section
+ * rwelf_get_section_type(const Elf_Shdr*)
+ * Returns the section type
  */
 int rwelf_get_section_type(const Elf_Shdr *shdr)
 {
@@ -102,3 +102,41 @@ int rwelf_get_section_type(const Elf_Shdr *shdr)
 	
 	return SHDR_DATA(shdr, sh_type);
 }
+
+/**
+ * rwelf_get_section_flags(const Elf_Shdr*)
+ * Returns the section flags
+ */
+int rwelf_get_section_flags(const Elf_Shdr *shdr)
+{
+	assert(shdr != NULL);
+	assert(shdr->elf != NULL);
+	
+	return SHDR_DATA(shdr, sh_flags);
+}
+
+/**
+ * rwelf_get_section_addr(const Elf_Shdr*)
+ * Returns the section address if it appears in the memory image of 
+ * process
+ */
+uintptr_t rwelf_get_section_addr(const Elf_Shdr *shdr)
+{
+	assert(shdr != NULL);
+	assert(shdr->elf != NULL);
+	
+	return SHDR_DATA(shdr, sh_addr);
+}
+
+/**
+ * rwelf_get_section_size(const Elf_Shdr*)
+ * Returns the section size in bytes
+ */
+size_t rwelf_get_section_size(const Elf_Shdr *shdr)
+{
+	assert(shdr != NULL);
+	assert(shdr->elf != NULL);
+	
+	return SHDR_DATA(shdr, sh_size);
+}
+

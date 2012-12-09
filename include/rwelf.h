@@ -60,7 +60,7 @@
 #define ELF_SYM(_elf,  _field, _n) RWELFN(_elf,  sym, _field, _n)
 
 #define SHDR_DATA(_shdr, _field) \
-	(ELF_IS_64(_shdr->elf) ? _shdr->shdr._64->_field : _shdr->shdr._32->_field)
+	(ELF_IS_64(_shdr->elf) ? SHDR64(_shdr)->_field : SHDR32(_shdr)->_field)
 
 typedef union {
 	Elf32_Shdr *_32;
@@ -134,12 +134,15 @@ extern size_t rwelf_num_symbols(const rwelf*);
 extern uintptr_t rwelf_entry(const rwelf*);
 
 /**
- * ElfN_Shdr related functions
+ * Elf_Shdr related functions
  */
 extern void rwelf_get_section_by_num(const rwelf*, size_t, Elf_Shdr*);
 extern int rwelf_get_section_by_name(const rwelf*, const char*, Elf_Shdr*);
 extern const unsigned char *rwelf_get_section_name(const Elf_Shdr*);
 extern int rwelf_get_section_type(const Elf_Shdr*);
+extern int rwelf_get_section_flags(const Elf_Shdr*);
+extern uintptr_t rwelf_get_section_addr(const Elf_Shdr*);
+extern size_t rwelf_get_section_size(const Elf_Shdr*);
 
 /**
  * ElfN_Sym related functions
