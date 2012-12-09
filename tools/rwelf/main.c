@@ -31,11 +31,11 @@ int main(int argc, char **argv) {
 		printf("Symbol: %s\n", rwelf_get_symbol_name(&sym));
 	}
 	
-	if (rwelf_get_section_by_name(elf, ".dynstr", &sec)) {
+	if (rwelf_get_section_by_name(elf, ".dynstr", &sec) != -1) {
 		printf("Section %s found!\n", rwelf_get_section_name(&sec));
 	}
 	
-	if (rwelf_get_symbol_by_name(elf, "rwelf_type", &sym)) {
+	if (rwelf_get_symbol_by_name(elf, "rwelf_type", &sym) != -1) {
 		printf("Symbol %s found!\n", rwelf_get_symbol_name(&sym));
 	}
 
