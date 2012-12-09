@@ -65,6 +65,8 @@
 #define SYM_DATA(_sym, _field) \
 	(ELF_IS_64(_sym->elf) ? SYM64(_sym)->_field : SYM32(_sym)->_field)
 	
+#define PHDR_DATA(_sym, _field) \
+	(ELF_IS_64(_sym->elf) ? PHDR64(_sym)->_field : PHDR32(_sym)->_field)
 
 typedef union {
 	Elf32_Shdr *_32;
@@ -157,6 +159,10 @@ extern uint64_t rwelf_get_section_size(const Elf_Shdr*);
  * Elf_Phdr related functions
  */
 extern void rwelf_get_pheader_by_num(const rwelf*, size_t, Elf_Phdr*);
+extern uint32_t rwelf_get_pheader_type(const Elf_Phdr*);
+extern uint32_t rwelf_get_pheader_flags(const Elf_Phdr*);
+extern uint64_t rwelf_get_pheader_vaddr(const Elf_Phdr*);
+extern const char *rwelf_get_pheader_type_name(const Elf_Phdr*);
 
 /**
  * Elf_Sym related functions

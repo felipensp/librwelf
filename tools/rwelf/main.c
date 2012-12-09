@@ -6,6 +6,7 @@ int main(int argc, char **argv) {
 	int i, num_sections, num_symbols;
 	Elf_Shdr sec;
 	Elf_Sym sym;
+	Elf_Phdr phdr;
 	rwelf *elf = rwelf_open("./librwelf.so");
 	
 	if (!elf) {
@@ -40,6 +41,9 @@ int main(int argc, char **argv) {
 			rwelf_get_symbol_name(&sym),
 			rwelf_get_symbol_section(&sym));
 	}
+	
+	rwelf_get_pheader_by_num(elf, 2, &phdr);
+	printf("%s found!\n", rwelf_get_pheader_type_name(&phdr));
 
 	rwelf_close(elf);
 
