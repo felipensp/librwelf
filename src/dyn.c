@@ -72,6 +72,10 @@ int rwelf_get_dynamic_by_tag(const rwelf *elf, int64_t tag, Elf_Dyn *dyn)
 	return -1;
 }
 
+/**
+ * rwelf_get_dynamic_strval(const Elf_Dyn*)
+ * Returns the string value related to .dynamic entry
+ */
 const unsigned char *rwelf_get_dynamic_strval(const Elf_Dyn *dyn)
 {
 	uint64_t val;
