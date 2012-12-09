@@ -31,6 +31,9 @@
 #include <stdint.h>
 #include <link.h>
 
+#define LIBRWELF_VERSION 100
+#define LIBRWELF_VERSION_STR  "0.1.0"
+
 #ifndef NULL
 #define NULL ((void*)0)
 #endif
