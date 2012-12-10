@@ -67,6 +67,9 @@
 #define ELF_SYM(_elf,  _field, _n) RWELFN(_elf,  sym, _field, _n)
 #define ELF_DYN(_elf, _field, _n)  RWELFN(_elf,  dyn, _field, _n)
 
+#define EHDR_DATA(_ehdr, _field) \
+	(ELF_IS_64((_ehdr)->elf) ? EHDR64(_ehdr)->_field : EHDR32(_ehdr)->_field)
+
 #define SHDR_DATA(_shdr, _field) \
 	(ELF_IS_64((_shdr)->elf) ? SHDR64(_shdr)->_field : SHDR32(_shdr)->_field)
 
@@ -157,18 +160,19 @@ typedef struct {
  */
 extern rwelf *rwelf_open(const char*);
 extern void rwelf_close(rwelf*);
+extern uint16_t rwelf_num_symbols(const rwelf*);
+extern void rwelf_get_header(const rwelf*, Elf_Ehdr*);
 
 /**
  * ElfN_Ehdr related functions 
  */
-extern const char *rwelf_class(const rwelf*);
-extern const char *rwelf_data(const rwelf*);
-extern uint32_t rwelf_version(const rwelf*);
-extern const char *rwelf_type(const rwelf*);
-extern uint16_t rwelf_num_sections(const rwelf*);
-extern uint16_t rwelf_num_pheaders(const rwelf*);
-extern uint16_t rwelf_num_symbols(const rwelf*);
-extern uint64_t rwelf_entry(const rwelf*);
+extern const char *rwelf_class(const Elf_Ehdr*);
+extern const char *rwelf_data(const Elf_Ehdr*);
+extern uint32_t rwelf_version(const Elf_Ehdr*);
+extern const char *rwelf_type(const Elf_Ehdr*);
+extern uint16_t rwelf_num_sections(const Elf_Ehdr*);
+extern uint16_t rwelf_num_pheaders(const Elf_Ehdr*);
+extern uint64_t rwelf_entry(const Elf_Ehdr*);
 
 /**
  * Elf_Shdr related functions

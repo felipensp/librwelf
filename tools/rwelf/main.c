@@ -29,6 +29,7 @@
 
 int main(int argc, char **argv) {
 	int i, num_sections, num_symbols;
+	Elf_Ehdr ehdr;
 	Elf_Shdr sec;
 	Elf_Sym sym;
 	Elf_Phdr phdr;
@@ -38,15 +39,17 @@ int main(int argc, char **argv) {
 	if (!elf) {
 		exit(1);
 	}
-	printf("Class:    %s\n", rwelf_class(elf));
-	printf("Data:     %s\n", rwelf_data(elf));
-	printf("Version:  %d\n", rwelf_version(elf));
-	printf("Type:     %s\n", rwelf_type(elf));
-	printf("Sections: %d\n", rwelf_num_sections(elf));
-	printf("PHeaders: %d\n", rwelf_num_pheaders(elf));
-	printf("Entry:    %p\n", rwelf_entry(elf));
+	rwelf_get_header(elf, &ehdr);
 	
-	num_sections = rwelf_num_sections(elf);
+	printf("Class:    %s\n", rwelf_class(&ehdr));
+	printf("Data:     %s\n", rwelf_data(&ehdr));
+	printf("Version:  %d\n", rwelf_version(&ehdr));
+	printf("Type:     %s\n", rwelf_type(&ehdr));
+	printf("Sections: %d\n", rwelf_num_sections(&ehdr));
+	printf("PHeaders: %d\n", rwelf_num_pheaders(&ehdr));
+	printf("Entry:    %p\n", rwelf_entry(&ehdr));
+	
+	num_sections = rwelf_num_sections(&ehdr);
 	for (i = 0; i < num_sections; ++i) {		
 		rwelf_get_section_by_num(elf, i, &sec);
 		printf("Section: %s\n", rwelf_get_section_name(&sec));

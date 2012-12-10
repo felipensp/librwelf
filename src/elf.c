@@ -158,6 +158,44 @@ rwelf *rwelf_open(const char *fname)
 }
 
 /**
+ * rwelf_get_header(const rwelf*, Elf_Ehdr*)
+ * Fill the out param with the ELF header
+ */
+void rwelf_get_header(const rwelf *elf, Elf_Ehdr *ehdr)
+{
+	assert(elf != NULL);
+	
+	ehdr->elf = elf;
+	if (ELF_IS_32(elf)) {
+		EHDR32(ehdr) = EHDR32(elf);
+	} else {
+		EHDR64(ehdr) = EHDR64(elf);
+	}
+}
+
+/**
+ * rwelf_num_symbols(const rwelf*)
+ * Returns the number of symbols in the symbol table
+ */
+uint16_t rwelf_num_symbols(const rwelf *elf)
+{
+	assert(elf != NULL);
+	
+	return elf->nsyms;
+}
+
+/**
+ * rwelf_num_dyn_symbols(const rwelf*)
+ * Returns the number of dynamic symbols in the .dynsym section
+ */
+uint16_t rwelf_num_dyn_symbols(const rwelf *elf)
+{
+	assert(elf != NULL);
+	
+	return elf->ndynsyms;
+}
+
+/**
  * rwelf_close(rwelf *elf)
  * Closes fd and unmap memory related to internal rwelf data
  */

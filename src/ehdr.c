@@ -29,11 +29,11 @@
  * rwelf_class(const rwelf *)
  * Returns the architecture of the binary
  */
-const char *rwelf_class(const rwelf *elf) 
+const char *rwelf_class(const Elf_Ehdr *ehdr) 
 {
-	assert(elf != NULL);
-	
-	switch (ELF_EHDR(elf, e_ident)[EI_CLASS]) {
+	assert(ehdr != NULL);
+
+	switch (EHDR_DATA(ehdr, e_ident)[EI_CLASS]) {
 		case ELFCLASS32:	return "ELF32";
 		case ELFCLASS64:	return "ELF64";	
 		case ELFCLASSNONE:
@@ -45,11 +45,11 @@ const char *rwelf_class(const rwelf *elf)
  * rwelf_version(const rwelf *)
  * Returns the version number of ELF specification
  */
-uint32_t rwelf_version(const rwelf *elf)
+uint32_t rwelf_version(const Elf_Ehdr *ehdr)
 {
-	assert(elf != NULL);
+	assert(ehdr != NULL);
 	
-	switch (ELF_EHDR(elf, e_ident)[EI_VERSION]) {
+	switch (EHDR_DATA(ehdr, e_ident)[EI_VERSION]) {
 		case EV_CURRENT:	return EV_CURRENT;
 		case EV_NONE:
 		default:			return 0;
@@ -60,11 +60,11 @@ uint32_t rwelf_version(const rwelf *elf)
  * rwelf_data(const rwelf *)
  * Returns the data encoding of the processor-specific data in the file
  */
-const char *rwelf_data(const rwelf *elf)
+const char *rwelf_data(const Elf_Ehdr *ehdr)
 {
-	assert(elf != NULL);
+	assert(ehdr != NULL);
 	
-	switch (ELF_EHDR(elf, e_ident)[EI_DATA]) {
+	switch (EHDR_DATA(ehdr, e_ident)[EI_DATA]) {
 		case ELFDATA2LSB:	return "2's complement, little-endian";
 		case ELFDATA2MSB:	return "2's complement, big-endian";
 		case ELFDATANONE:
@@ -76,11 +76,11 @@ const char *rwelf_data(const rwelf *elf)
  * rwelf_type(const rwelf *)
  * Returns the object file type
  */
-const char *rwelf_type(const rwelf *elf)
+const char *rwelf_type(const Elf_Ehdr *ehdr)
 {
-	assert(elf != NULL);
+	assert(ehdr != NULL);
 	
-	switch (ELF_EHDR(elf, e_type)) {
+	switch (EHDR_DATA(ehdr, e_type)) {
 		case ET_REL:	return "REL (relocatable file)";
 		case ET_EXEC:	return "EXEC (executable file)";
 		case ET_DYN:	return "DYN (shared object)";
@@ -94,53 +94,31 @@ const char *rwelf_type(const rwelf *elf)
  * rwelf_num_sections(const rwelf *elf)
  * Returns the number of entries on sections header table
  */
-uint16_t rwelf_num_sections(const rwelf *elf)
+uint16_t rwelf_num_sections(const Elf_Ehdr *ehdr)
 {
-	assert(elf != NULL);
+	assert(ehdr != NULL);
 	
-	return ELF_EHDR(elf, e_shnum);
+	return EHDR_DATA(ehdr, e_shnum);
 }
 
 /**
  * rwelf_num_pheader(const rwelf *elf)
  * Returns the number of entries on program header table
  */
-uint16_t rwelf_num_pheaders(const rwelf *elf)
+uint16_t rwelf_num_pheaders(const Elf_Ehdr *ehdr)
 {
-	assert(elf != NULL);
+	assert(ehdr != NULL);
 
-	return ELF_EHDR(elf, e_phnum);
-}
-
-/**
- * rwelf_num_symbols(const rwelf*)
- * Returns the number of symbols in the symbol table
- */
-uint16_t rwelf_num_symbols(const rwelf *elf)
-{
-	assert(elf != NULL);
-	
-	return elf->nsyms;
-}
-
-/**
- * rwelf_num_dyn_symbols(const rwelf*)
- * Returns the number of dynamic symbols in the .dynsym section
- */
-uint16_t rwelf_num_dyn_symbols(const rwelf *elf)
-{
-	assert(elf != NULL);
-	
-	return elf->ndynsyms;
+	return EHDR_DATA(ehdr, e_phnum);
 }
 
 /**
  * rwelf_entry(const rwelf *elf)
  * Returns the virtual address of entry point
  */ 
-uint64_t rwelf_entry(const rwelf *elf)
+uint64_t rwelf_entry(const Elf_Ehdr *ehdr)
 {
-	assert(elf != NULL);
+	assert(ehdr != NULL);
 	
-	return ELF_EHDR(elf, e_entry);
+	return EHDR_DATA(ehdr, e_entry);
 }
