@@ -166,6 +166,7 @@ void rwelf_get_header(const rwelf *elf, Elf_Ehdr *ehdr)
 	assert(elf != NULL);
 	
 	ehdr->elf = elf;
+
 	if (ELF_IS_32(elf)) {
 		EHDR32(ehdr) = EHDR32(elf);
 	} else {
