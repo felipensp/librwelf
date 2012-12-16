@@ -52,6 +52,9 @@
 #define DYN64(_elf)  RWELF_DATA(_elf,  dyn, _64)
 #define DYNSYM32(_elf)  RWELF_DATA(_elf,  dynsym, _32)
 #define DYNSYM64(_elf)  RWELF_DATA(_elf,  dynsym, _64)
+#define RELA32(_elf)  RWELF_DATA(_elf,  rela, _32)
+#define RELA64(_elf)  RWELF_DATA(_elf,  rela, _64)
+
 
 #define ELF_IS_32(_elf) (_elf->class == ELFCLASS32)
 #define ELF_IS_64(_elf) (_elf->class == ELFCLASS64)
@@ -81,6 +84,9 @@
 	
 #define DYN_DATA(_dyn, _field) \
 	(ELF_IS_64((_dyn)->elf) ? DYN64(_dyn)->_field : DYN32(_dyn)->_field)
+	
+#define RELA_DATA(_rela, _field) \
+	(ELF_IS_64((_rela)->elf) ? RELA64(_rela)->_field : RELA32(_rela)->_field)	
 
 typedef union {
 	Elf32_Shdr *_32;
@@ -106,6 +112,11 @@ typedef union {
 	Elf32_Dyn *_32;
 	Elf64_Dyn *_64;
 } rwelf_dyn;
+
+typedef union {
+	Elf32_Rela *_32;
+	Elf64_Rela *_64;
+} rwelf_rela;
 
 typedef struct {
 	int fd;
@@ -154,6 +165,12 @@ typedef struct {
 	const rwelf *elf;
 	rwelf_dyn dyn;
 } Elf_Dyn;
+
+typedef struct {
+	const rwelf *elf;
+	const Elf_Shdr *shdr;
+	rwelf_rela rela;
+} Elf_Rela;
 
 /**
  * Functions for handling internal rwelf data
@@ -217,5 +234,15 @@ extern int64_t rwelf_get_dynamic_tag(const Elf_Dyn*);
 extern const char *rwelf_get_dynamic_tag_name(const Elf_Dyn*);
 extern const unsigned char *rwelf_get_dynamic_strval(const Elf_Dyn*);
 extern int rwelf_get_dynamic_by_tag(const rwelf*, int64_t, Elf_Dyn*);
+
+/**
+ * Elf_Rela related functions
+ */
+extern void rwelf_get_rela_by_num(const Elf_Shdr*, size_t, Elf_Rela*);
+extern uint64_t rwelf_get_rela_offset(const Elf_Rela*);
+extern uint64_t rwelf_get_rela_info(const Elf_Rela*);
+extern int64_t rwelf_get_rela_addend(const Elf_Rela*);
+extern uint64_t rwelf_get_rela_type(const Elf_Rela*);
+extern const unsigned char *rwelf_get_rela_symbol(const Elf_Rela*);
 
 #endif /* RWELF_H */

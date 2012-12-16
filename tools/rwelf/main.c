@@ -84,6 +84,26 @@ static void _show_elf_symbols(const rwelf *elf)
 }
 
 /**
+ * Displays the Rela information
+ */
+static void _show_elf_rela(const Elf_Shdr *shdr, size_t n)
+{
+	int i;
+	
+	for (i = 0; i < n; ++i) {
+		Elf_Rela rela;
+		
+		rwelf_get_rela_by_num(shdr, i, &rela);
+		
+		printf("Offset: %012lx | Info: %012lx | Addend: %012lx | Sym: %s\n", 
+			rwelf_get_rela_offset(&rela),
+			rwelf_get_rela_info(&rela),
+			rwelf_get_rela_addend(&rela),
+			rwelf_get_rela_symbol(&rela));
+	}
+}
+
+/**
  * Displays the ELF relocations (-r option)
  */
 static void _show_elf_relocations(const rwelf *elf)
@@ -97,14 +117,17 @@ static void _show_elf_relocations(const rwelf *elf)
 	
 	for (i = 0; i < num_sections; ++i) {
 		Elf_Shdr sec;
+		size_t n;
 			
 		rwelf_get_section_by_num(elf, i, &sec);		
 		
 		switch (rwelf_get_section_type(&sec)) {
 			case SHT_REL:
 			case SHT_RELA:
-				printf("Relocation entries: %d\n",
-					rwelf_get_num_entries(&sec));
+				n = rwelf_get_num_entries(&sec);
+				printf("Relocation entries: %d\n", n);
+					
+				_show_elf_rela(&sec, n);
 				break;
 		}
 	}

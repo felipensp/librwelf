@@ -12,6 +12,7 @@ librwelf:
 	$(CC) -fPIC -g -c -Wall -pedantic -Iinclude/ -osrc/sym.o src/sym.c
 	$(CC) -fPIC -g -c -Wall -pedantic -Iinclude/ -osrc/phdr.o src/phdr.c
 	$(CC) -fPIC -g -c -Wall -pedantic -Iinclude/ -osrc/dyn.o src/dyn.c
+	$(CC) -fPIC -g -c -Wall -pedantic -Iinclude/ -osrc/rela.o src/rela.c
 	$(CC) -shared -Wl,-soname,librwelf.so.0 -olibrwelf.so.0.1.0 $(OBJS)
 	ln -sf librwelf.so.0.1.0 librwelf.so.0
 	ln -sf librwelf.so.0.1.0 librwelf.so
