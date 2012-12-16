@@ -65,6 +65,9 @@ static void _show_elf_sections(const rwelf *elf)
     }    
 }
 
+/**
+ * Displays the ELF symbols (-s option)
+ */
 static void _show_elf_symbols(const rwelf *elf)
 {
 	Elf_Ehdr ehdr;
@@ -80,6 +83,33 @@ static void _show_elf_symbols(const rwelf *elf)
 	}
 }
 
+/**
+ * Displays the ELF relocations (-r option)
+ */
+static void _show_elf_relocations(const rwelf *elf)
+{
+	Elf_Ehdr ehdr;
+	int i, num_sections;
+	
+	rwelf_get_header(elf, &ehdr);
+	
+	num_sections = rwelf_num_sections(&ehdr);
+	
+	for (i = 0; i < num_sections; ++i) {
+		Elf_Shdr sec;
+			
+		rwelf_get_section_by_num(elf, i, &sec);		
+		
+		switch (rwelf_get_section_type(&sec)) {
+			case SHT_REL:
+			case SHT_RELA:
+				printf("Relocation entries: %d\n",
+					rwelf_get_num_relocs(&sec));
+				break;
+		}
+	}
+}
+
 int main(int argc, char **argv)
 {
 	int action, c, i;
@@ -88,11 +118,12 @@ int main(int argc, char **argv)
 	Elf_Dyn dyn;
 	rwelf *elf;
 	
-	while ((c = getopt(argc, argv, "h:S:s:")) != -1) {
+	while ((c = getopt(argc, argv, "h:S:s:r:")) != -1) {
 		switch (c) {
 			case 'h':
 			case 'S':
 			case 's':
+			case 'r':
 				file = optarg;
 				action = c;
 				break;
@@ -118,6 +149,9 @@ int main(int argc, char **argv)
 			break;
 		case 's':
 			_show_elf_symbols(elf);
+			break;
+		case 'r':
+			_show_elf_relocations(elf);
 			break;
 	}
 	
