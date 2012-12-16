@@ -133,6 +133,24 @@ static void _show_elf_relocations(const rwelf *elf)
 	}
 }
 
+static void _show_elf_pheaders(const rwelf *elf)
+{
+	Elf_Ehdr ehdr;
+	int i, num_phdrs;
+	
+	rwelf_get_header(elf, &ehdr);
+	
+	num_phdrs = rwelf_num_pheaders(&ehdr);
+	
+	for (i = 0; i < num_phdrs; ++i) {
+		Elf_Phdr phdr;
+				
+		rwelf_get_pheader_by_num(elf, i, &phdr);
+	
+		printf("Type: %s\n", rwelf_get_pheader_type_name(&phdr));
+	}
+}
+
 int main(int argc, char **argv)
 {
 	int action, c, i;
@@ -141,12 +159,13 @@ int main(int argc, char **argv)
 	Elf_Dyn dyn;
 	rwelf *elf;
 	
-	while ((c = getopt(argc, argv, "h:S:s:r:")) != -1) {
+	while ((c = getopt(argc, argv, "h:l:S:s:r:")) != -1) {
 		switch (c) {
-			case 'h':
-			case 'S':
-			case 's':
-			case 'r':
+			case 'h': /* Header */
+			case 'l': /* Program header */
+			case 'r': /* Relocation */
+			case 'S': /* Sections */
+			case 's': /* Symbol table */
 				file = optarg;
 				action = c;
 				break;
@@ -164,17 +183,20 @@ int main(int argc, char **argv)
 	}
 
 	switch (action) {
+		case 'l':
+			_show_elf_pheaders(elf);
+			break;
 		case 'h':
 			_show_elf_header(elf);
+			break;
+		case 'r':
+			_show_elf_relocations(elf);
 			break;
 		case 'S':
 			_show_elf_sections(elf);
 			break;
 		case 's':
 			_show_elf_symbols(elf);
-			break;
-		case 'r':
-			_show_elf_relocations(elf);
 			break;
 	}
 	
@@ -192,9 +214,6 @@ int main(int argc, char **argv)
 			rwelf_get_symbol_name(&sym),
 			rwelf_get_symbol_section(&sym));
 	}
-	
-	rwelf_get_pheader_by_num(elf, 2, &phdr);
-	printf("%s found!\n", rwelf_get_pheader_type_name(&phdr));
 	
 	if (rwelf_get_dynamic_by_tag(elf, DT_SONAME, &dyn) != -1) {
 		printf("%s found, %s!\n",
