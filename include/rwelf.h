@@ -184,7 +184,7 @@ extern uint32_t rwelf_get_section_type(const Elf_Shdr*);
 extern uint64_t rwelf_get_section_flags(const Elf_Shdr*);
 extern uint64_t rwelf_get_section_addr(const Elf_Shdr*);
 extern uint64_t rwelf_get_section_size(const Elf_Shdr*);
-extern uint64_t rwelf_get_num_relocs(const Elf_Shdr*);
+extern uint64_t rwelf_get_num_entries(const Elf_Shdr*);
 
 /**
  * Elf_Phdr related functions

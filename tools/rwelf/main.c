@@ -104,7 +104,7 @@ static void _show_elf_relocations(const rwelf *elf)
 			case SHT_REL:
 			case SHT_RELA:
 				printf("Relocation entries: %d\n",
-					rwelf_get_num_relocs(&sec));
+					rwelf_get_num_entries(&sec));
 				break;
 		}
 	}

@@ -146,21 +146,14 @@ uint64_t rwelf_get_section_size(const Elf_Shdr *shdr)
 }
 
 /**
- * rwelf_get_num_relocs(const Elf_Shdr*)
- * Returns the number of relocation entries
+ * rwelf_get_num_entries(const Elf_Shdr*)
+ * Returns the number of entries
  */
-uint64_t rwelf_get_num_relocs(const Elf_Shdr *shdr)
+uint64_t rwelf_get_num_entries(const Elf_Shdr *shdr)
 {
 	assert(shdr != NULL);
 	assert(shdr->elf != NULL);
 	
-	switch (SHDR_DATA(shdr, sh_type)) {
-		case SHT_REL:  /* .rel. */
-		case SHT_RELA: /* .rela. */
-			return SHDR_DATA(shdr, sh_size) /
-				SHDR_DATA(shdr, sh_entsize);
-			break;
-	}
-	return -1;
+	return SHDR_DATA(shdr, sh_size) / SHDR_DATA(shdr, sh_entsize);
 }
 

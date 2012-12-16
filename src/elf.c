@@ -51,8 +51,7 @@ static void inline _find_str_tables(rwelf *elf)
 			SYM32(elf) = (Elf32_Sym*)(elf->file +
 				SHDR_DATA(&shdr, sh_offset));
 		}
-		elf->nsyms = SHDR_DATA(&shdr, sh_size) /
-			SHDR_DATA(&shdr, sh_entsize);
+		elf->nsyms = rwelf_get_num_entries(&shdr);
 	}
 	
 	/* Symbol name string table */
@@ -74,8 +73,7 @@ static void inline _find_str_tables(rwelf *elf)
 			DYNSYM64(elf) = (Elf64_Sym*)(elf->file +
 				SHDR_DATA(&shdr, sh_offset));
 		}
-		elf->ndynsyms = SHDR_DATA(&shdr, sh_size) / 
-			SHDR_DATA(&shdr, sh_entsize);
+		elf->ndynsyms = rwelf_get_num_entries(&shdr);
 	}
 	
 	/* Dynamic section */
@@ -87,8 +85,7 @@ static void inline _find_str_tables(rwelf *elf)
 			DYN64(elf) = (Elf64_Dyn*)(elf->file +
 				SHDR_DATA(&shdr, sh_offset));
 		}
-		elf->ndyns = SHDR_DATA(&shdr, sh_size) / 
-			SHDR_DATA(&shdr, sh_entsize);
+		elf->ndyns = rwelf_get_num_entries(&shdr);
 	}
 }
 
