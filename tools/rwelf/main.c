@@ -26,19 +26,15 @@
 #include <rwelf.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <getopt.h>
 
-int main(int argc, char **argv) {
-	int i, num_sections, num_symbols;
+/**
+ * Displays the ELF header information (-h option)
+ */
+static void _show_elf_header(const rwelf *elf)
+{	
 	Elf_Ehdr ehdr;
-	Elf_Shdr sec;
-	Elf_Sym sym;
-	Elf_Phdr phdr;
-	Elf_Dyn dyn;
-	rwelf *elf = rwelf_open("./librwelf.so");
-	
-	if (!elf) {
-		exit(1);
-	}
+
 	rwelf_get_header(elf, &ehdr);
 	
 	printf("Class:    %s\n", rwelf_class(&ehdr));
@@ -48,18 +44,87 @@ int main(int argc, char **argv) {
 	printf("Sections: %d\n", rwelf_num_sections(&ehdr));
 	printf("PHeaders: %d\n", rwelf_num_pheaders(&ehdr));
 	printf("Entry:    %p\n", rwelf_entry(&ehdr));
+}
+
+/**
+ * Displays the ELF sections information (-S option)
+ */
+static void _show_elf_sections(const rwelf *elf)
+{
+	Elf_Shdr sec;
+	Elf_Ehdr ehdr;
+	int i, num_sections;
+
+	rwelf_get_header(elf, &ehdr);
 	
 	num_sections = rwelf_num_sections(&ehdr);
-	for (i = 0; i < num_sections; ++i) {		
-		rwelf_get_section_by_num(elf, i, &sec);
-		printf("Section: %s\n", rwelf_get_section_name(&sec));
-	}
+	
+    for (i = 0; i < num_sections; ++i) {
+        rwelf_get_section_by_num(elf, i, &sec);
+        printf("Section: %s\n", rwelf_get_section_name(&sec));
+    }    
+}
+
+static void _show_elf_symbols(const rwelf *elf)
+{
+	Elf_Ehdr ehdr;
+	Elf_Sym sym;
+	int i, num_symbols;
+	
+	rwelf_get_header(elf, &ehdr);
 	
 	num_symbols = rwelf_num_symbols(elf);
 	for (i = 0; i < num_symbols; ++i) {
 		rwelf_get_symbol_by_num(elf, i, &sym);
 		printf("Symbol: %s\n", rwelf_get_symbol_name(&sym));
 	}
+}
+
+int main(int argc, char **argv)
+{
+	int action, c, i;
+	const char *file;
+	Elf_Phdr phdr;
+	Elf_Dyn dyn;
+	rwelf *elf;
+	
+	while ((c = getopt(argc, argv, "h:S:s:")) != -1) {
+		switch (c) {
+			case 'h':
+			case 'S':
+			case 's':
+				file = optarg;
+				action = c;
+				break;
+			default:
+				break;
+		}		
+	}
+	
+	if (!file) {
+		return 0;
+	}
+	
+	if (!(elf = rwelf_open(file))) {
+		exit(1);
+	}
+
+	switch (action) {
+		case 'h':
+			_show_elf_header(elf);
+			break;
+		case 'S':
+			_show_elf_sections(elf);
+			break;
+		case 's':
+			_show_elf_symbols(elf);
+			break;
+	}
+	
+	rwelf_close(elf);	
+	
+	/*
+
 	
 	if (rwelf_get_section_by_name(elf, ".dynstr", &sec) != -1) {
 		printf("Section %s found!\n", rwelf_get_section_name(&sec));
@@ -88,7 +153,7 @@ int main(int argc, char **argv) {
 			rwelf_get_symbol_section(&sym));
 	}
 
-	rwelf_close(elf);
-
+	
+*/
 	return 0;
 }
