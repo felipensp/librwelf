@@ -168,7 +168,6 @@ typedef struct {
 
 typedef struct {
 	const rwelf *elf;
-	const Elf_Shdr *shdr;
 	rwelf_rela rela;
 } Elf_Rela;
 

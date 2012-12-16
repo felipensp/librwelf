@@ -34,7 +34,6 @@ void rwelf_get_rela_by_num(const Elf_Shdr *shdr, size_t n,
 		return;
 	}
 	rela->elf = shdr->elf;
-	rela->shdr = shdr;
 	
 	if (ELF_IS_32(shdr->elf)) {
 		RELA32(rela) = (Elf32_Rela*)(shdr->elf->file +
@@ -106,11 +105,13 @@ const unsigned char *rwelf_get_rela_symbol(const Elf_Rela *rela)
 	assert(rela != NULL);
 	assert(rela->elf != NULL);
 	
+	/* Read the symbol from .dynsym section + r_info */
 	rwelf_get_dyn_symbol_by_num(rela->elf,
 		(ELF_IS_64(rela->elf) ? 
 			ELF64_R_SYM(RELA_DATA(rela, r_info)) :
 			ELF32_R_SYM(RELA_DATA(rela, r_info))),
 		&sym);
-		
+	
+	/* Get the name from .dynstr */
 	return rwelf_get_dyn_symbol_name(&sym);
 }
