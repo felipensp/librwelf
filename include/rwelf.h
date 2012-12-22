@@ -60,7 +60,7 @@
 #define ELF_IS_64(_elf) (_elf->class == ELFCLASS64)
 
 #define RWELFN(_elf, _mem, _field, _n) \
-	(ELF_IS_64(_elf) ? (RWELF_DATA(_elf, _mem, _64)+_n)->_field : (RWELF_DATA(_elf, _mem, _64)+_n)->_field)
+	(ELF_IS_64(_elf) ? (RWELF_DATA(_elf, _mem, _64)+_n)->_field : (RWELF_DATA(_elf, _mem, _32)+_n)->_field)
 
 #define RWELF(_elf, _mem, _field) RWELFN(_elf, _mem, _field, 0)
 	
