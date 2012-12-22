@@ -67,7 +67,7 @@
 #define RWELF(_elf, _type, _field, _n) \
 	(ELF_IS_64(_elf) ? (_type##64(_elf)+_n)->_field : (_type##32(_elf)+_n)->_field)
 	
-#define ELF_EHDR(_elf, _field)     RWELF(_elf,  EHDR, _field,  0)
+#define ELF_EHDR(_elf, _field)     RWELF(_elf, EHDR, _field,  0)
 #define ELF_SHDR(_elf, _field, _n) RWELF(_elf, SHDR, _field, _n)
 #define ELF_PHDR(_elf, _field, _n) RWELF(_elf, PHDR, _field, _n)
 #define ELF_SYM(_elf, _field, _n)  RWELF(_elf, SYM,  _field, _n)
