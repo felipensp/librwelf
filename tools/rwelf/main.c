@@ -31,33 +31,27 @@
 /**
  * Displays the ELF header information (-h option)
  */
-static void _show_elf_header(const rwelf *elf)
+static void _show_elf_header(const Elf_Ehdr *ehdr)
 {	
-	Elf_Ehdr ehdr;
-
-	rwelf_get_header(elf, &ehdr);
-	
-	printf("Class:    %s\n", rwelf_class(&ehdr));
-	printf("Data:     %s\n", rwelf_data(&ehdr));
-	printf("Version:  %d\n", rwelf_version(&ehdr));
-	printf("Type:     %s\n", rwelf_type(&ehdr));
-	printf("Sections: %d\n", rwelf_num_sections(&ehdr));
-	printf("PHeaders: %d\n", rwelf_num_pheaders(&ehdr));
-	printf("Entry:    %p\n", rwelf_entry(&ehdr));
+	printf("Class:    %s\n", rwelf_class(ehdr));
+	printf("Data:     %s\n", rwelf_data(ehdr));
+	printf("Version:  %d\n", rwelf_version(ehdr));
+	printf("Type:     %s\n", rwelf_type(ehdr));
+	printf("Sections: %d\n", rwelf_num_sections(ehdr));
+	printf("PHeaders: %d\n", rwelf_num_pheaders(ehdr));
+	printf("Entry:    %p\n", rwelf_entry(ehdr));
 }
 
 /**
  * Displays the ELF sections information (-S option)
  */
-static void _show_elf_sections(const rwelf *elf)
+static void _show_elf_sections(const Elf_Ehdr *ehdr)
 {
+	const rwelf *elf = ehdr->elf;
 	Elf_Shdr sec;
-	Elf_Ehdr ehdr;
 	int i, num_sections;
-
-	rwelf_get_header(elf, &ehdr);
 	
-	num_sections = rwelf_num_sections(&ehdr);
+	num_sections = rwelf_num_sections(ehdr);
 	
     for (i = 0; i < num_sections; ++i) {
         rwelf_get_section_by_num(elf, i, &sec);
@@ -70,11 +64,8 @@ static void _show_elf_sections(const rwelf *elf)
  */
 static void _show_elf_symbols(const rwelf *elf)
 {
-	Elf_Ehdr ehdr;
 	Elf_Sym sym;
 	int i, num_symbols;
-	
-	rwelf_get_header(elf, &ehdr);
 	
 	num_symbols = rwelf_num_symbols(elf);
 	for (i = 0; i < num_symbols; ++i) {
@@ -106,14 +97,12 @@ static void _show_elf_rela(const Elf_Shdr *shdr, size_t n)
 /**
  * Displays the ELF relocations (-r option)
  */
-static void _show_elf_relocations(const rwelf *elf)
+static void _show_elf_relocations(const Elf_Ehdr *ehdr)
 {
-	Elf_Ehdr ehdr;
+	const rwelf *elf = ehdr->elf;
 	int i, num_sections;
 	
-	rwelf_get_header(elf, &ehdr);
-	
-	num_sections = rwelf_num_sections(&ehdr);
+	num_sections = rwelf_num_sections(ehdr);
 	
 	for (i = 0; i < num_sections; ++i) {
 		Elf_Shdr sec;
@@ -133,14 +122,15 @@ static void _show_elf_relocations(const rwelf *elf)
 	}
 }
 
-static void _show_elf_pheaders(const rwelf *elf)
+/**
+ * Displays the program header information (-l option)
+ */
+static void _show_elf_pheaders(const Elf_Ehdr *ehdr)
 {
-	Elf_Ehdr ehdr;
+	const rwelf *elf = ehdr->elf;
 	int i, num_phdrs;
 	
-	rwelf_get_header(elf, &ehdr);
-	
-	num_phdrs = rwelf_num_pheaders(&ehdr);
+	num_phdrs = rwelf_num_pheaders(ehdr);
 	
 	for (i = 0; i < num_phdrs; ++i) {
 		Elf_Phdr phdr;
@@ -157,6 +147,7 @@ int main(int argc, char **argv)
 	const char *file;
 	Elf_Phdr phdr;
 	Elf_Dyn dyn;
+	Elf_Ehdr ehdr;
 	rwelf *elf;
 	
 	while ((c = getopt(argc, argv, "h:l:S:s:r:")) != -1) {
@@ -181,19 +172,20 @@ int main(int argc, char **argv)
 	if (!(elf = rwelf_open(file))) {
 		exit(1);
 	}
+	rwelf_get_header(elf, &ehdr);
 
 	switch (action) {
 		case 'l':
-			_show_elf_pheaders(elf);
+			_show_elf_pheaders(&ehdr);
 			break;
 		case 'h':
-			_show_elf_header(elf);
+			_show_elf_header(&ehdr);
 			break;
 		case 'r':
-			_show_elf_relocations(elf);
+			_show_elf_relocations(&ehdr);
 			break;
 		case 'S':
-			_show_elf_sections(elf);
+			_show_elf_sections(&ehdr);
 			break;
 		case 's':
 			_show_elf_symbols(elf);
