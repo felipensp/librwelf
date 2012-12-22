@@ -38,55 +38,55 @@
 #define NULL ((void*)0)
 #endif
 
+/**
+ * Helper to access librwelf's struct member
+ */
 #define RWELF_DATA(_elf, _mem, _class) (_elf)->_mem._class
 
-#define EHDR32(_elf) RWELF_DATA(_elf, ehdr, _32)
-#define EHDR64(_elf) RWELF_DATA(_elf, ehdr, _64)
-#define SHDR32(_elf) RWELF_DATA(_elf, shdr, _32)
-#define SHDR64(_elf) RWELF_DATA(_elf, shdr, _64)
-#define PHDR32(_elf) RWELF_DATA(_elf, phdr, _32)
-#define PHDR64(_elf) RWELF_DATA(_elf, phdr, _64)
-#define SYM32(_elf)  RWELF_DATA(_elf,  sym, _32)
-#define SYM64(_elf)  RWELF_DATA(_elf,  sym, _64)
-#define DYN32(_elf)  RWELF_DATA(_elf,  dyn, _32)
-#define DYN64(_elf)  RWELF_DATA(_elf,  dyn, _64)
-#define DYNSYM32(_elf)  RWELF_DATA(_elf,  dynsym, _32)
-#define DYNSYM64(_elf)  RWELF_DATA(_elf,  dynsym, _64)
-#define RELA32(_elf)  RWELF_DATA(_elf,  rela, _32)
-#define RELA64(_elf)  RWELF_DATA(_elf,  rela, _64)
-
+#define EHDR32(_elf)   RWELF_DATA(_elf, ehdr, _32)
+#define EHDR64(_elf)   RWELF_DATA(_elf, ehdr, _64)
+#define SHDR32(_elf)   RWELF_DATA(_elf, shdr, _32)
+#define SHDR64(_elf)   RWELF_DATA(_elf, shdr, _64)
+#define PHDR32(_elf)   RWELF_DATA(_elf, phdr, _32)
+#define PHDR64(_elf)   RWELF_DATA(_elf, phdr, _64)
+#define SYM32(_elf)    RWELF_DATA(_elf,  sym, _32)
+#define SYM64(_elf)    RWELF_DATA(_elf,  sym, _64)
+#define DYN32(_elf)    RWELF_DATA(_elf,  dyn, _32)
+#define DYN64(_elf)    RWELF_DATA(_elf,  dyn, _64)
+#define DYNSYM32(_elf) RWELF_DATA(_elf,  dynsym, _32)
+#define DYNSYM64(_elf) RWELF_DATA(_elf,  dynsym, _64)
+#define RELA32(_elf)   RWELF_DATA(_elf,  rela, _32)
+#define RELA64(_elf)   RWELF_DATA(_elf,  rela, _64)
 
 #define ELF_IS_32(_elf) (_elf->class == ELFCLASS32)
 #define ELF_IS_64(_elf) (_elf->class == ELFCLASS64)
 
-#define RWELFN(_elf, _mem, _field, _n) \
-	(ELF_IS_64(_elf) ? (RWELF_DATA(_elf, _mem, _64)+_n)->_field : (RWELF_DATA(_elf, _mem, _32)+_n)->_field)
+/**
+ * Helper to access ELF data through rwelf pointer
+ */
+#define RWELFN(_elf, _type, _field, _n) \
+	(ELF_IS_64(_elf) ? (_type##64(_elf)+_n)->_field : (_type##32(_elf)+_n)->_field)
 
 #define RWELF(_elf, _mem, _field) RWELFN(_elf, _mem, _field, 0)
 	
-#define ELF_EHDR(_elf, _field)     RWELF(_elf,  ehdr, _field)
-#define ELF_SHDR(_elf, _field, _n) RWELFN(_elf, shdr, _field, _n)
-#define ELF_PHDR(_elf, _field, _n) RWELFN(_elf, phdr, _field, _n)
-#define ELF_SYM(_elf,  _field, _n) RWELFN(_elf,  sym, _field, _n)
-#define ELF_DYN(_elf, _field, _n)  RWELFN(_elf,  dyn, _field, _n)
+#define ELF_EHDR(_elf, _field)     RWELF(_elf,  EHDR, _field)
+#define ELF_SHDR(_elf, _field, _n) RWELFN(_elf, SHDR, _field, _n)
+#define ELF_PHDR(_elf, _field, _n) RWELFN(_elf, PHDR, _field, _n)
+#define ELF_SYM(_elf, _field, _n)  RWELFN(_elf, SYM,  _field, _n)
+#define ELF_DYN(_elf, _field, _n)  RWELFN(_elf, DYN,  _field, _n)
 
-#define EHDR_DATA(_ehdr, _field) \
-	(ELF_IS_64((_ehdr)->elf) ? EHDR64(_ehdr)->_field : EHDR32(_ehdr)->_field)
+/**
+ * Helper to access Elf_(Shr, Ehdr, ...) member
+ */
+#define RWELF_DATA2(_var, _type, _field) \
+	(ELF_IS_64((_var)->elf) ? _type##64(_var)->_field : _type##32(_var)->_field)
 
-#define SHDR_DATA(_shdr, _field) \
-	(ELF_IS_64((_shdr)->elf) ? SHDR64(_shdr)->_field : SHDR32(_shdr)->_field)
-
-#define SYM_DATA(_sym, _field) \
-	(ELF_IS_64((_sym)->elf) ? SYM64(_sym)->_field : SYM32(_sym)->_field)
-	
-#define PHDR_DATA(_sym, _field) \
-	(ELF_IS_64((_sym)->elf) ? PHDR64(_sym)->_field : PHDR32(_sym)->_field)
-	
-#define DYN_DATA(_dyn, _field) \
-	(ELF_IS_64((_dyn)->elf) ? DYN64(_dyn)->_field : DYN32(_dyn)->_field)
-	
-#define RELA_DATA(_rela, _field) \
-	(ELF_IS_64((_rela)->elf) ? RELA64(_rela)->_field : RELA32(_rela)->_field)	
+#define EHDR_DATA(_ehdr, _field) RWELF_DATA2(_ehdr, EHDR, _field)
+#define SHDR_DATA(_shdr, _field) RWELF_DATA2(_shdr, SHDR, _field)
+#define SYM_DATA(_sym, _field)   RWELF_DATA2(_sym,  SYM,  _field)
+#define PHDR_DATA(_phdr, _field) RWELF_DATA2(_phdr, PHDR, _field)
+#define DYN_DATA(_dyn, _field)   RWELF_DATA2(_dyn,  DYN,  _field)
+#define RELA_DATA(_rela, _field) RWELF_DATA2(_rela, RELA, _field)
 
 typedef union {
 	Elf32_Shdr *_32;
