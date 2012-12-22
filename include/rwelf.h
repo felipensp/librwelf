@@ -78,15 +78,15 @@
 /**
  * Helper to access Elf_(Shr, Ehdr, ...) member
  */
-#define RWELF_DATA2(_var, _type, _field) \
+#define RWELF2(_var, _type, _field) \
 	(ELF_IS_64((_var)->elf) ? _type##64(_var)->_field : _type##32(_var)->_field)
 
-#define EHDR_DATA(_ehdr, _field) RWELF_DATA2(_ehdr, EHDR, _field)
-#define SHDR_DATA(_shdr, _field) RWELF_DATA2(_shdr, SHDR, _field)
-#define SYM_DATA(_sym, _field)   RWELF_DATA2(_sym,  SYM,  _field)
-#define PHDR_DATA(_phdr, _field) RWELF_DATA2(_phdr, PHDR, _field)
-#define DYN_DATA(_dyn, _field)   RWELF_DATA2(_dyn,  DYN,  _field)
-#define RELA_DATA(_rela, _field) RWELF_DATA2(_rela, RELA, _field)
+#define EHDR_DATA(_ehdr, _field) RWELF2(_ehdr, EHDR, _field)
+#define SHDR_DATA(_shdr, _field) RWELF2(_shdr, SHDR, _field)
+#define SYM_DATA(_sym, _field)   RWELF2(_sym,  SYM,  _field)
+#define PHDR_DATA(_phdr, _field) RWELF2(_phdr, PHDR, _field)
+#define DYN_DATA(_dyn, _field)   RWELF2(_dyn,  DYN,  _field)
+#define RELA_DATA(_rela, _field) RWELF2(_rela, RELA, _field)
 
 typedef union {
 	Elf32_Shdr *_32;
