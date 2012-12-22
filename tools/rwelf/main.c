@@ -145,8 +145,6 @@ int main(int argc, char **argv)
 {
 	int action, c, i;
 	const char *file;
-	Elf_Phdr phdr;
-	Elf_Dyn dyn;
 	Elf_Ehdr ehdr;
 	rwelf *elf;
 	
