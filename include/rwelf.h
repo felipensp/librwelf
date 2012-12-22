@@ -64,16 +64,14 @@
 /**
  * Helper to access ELF data through rwelf pointer
  */
-#define RWELFN(_elf, _type, _field, _n) \
+#define RWELF(_elf, _type, _field, _n) \
 	(ELF_IS_64(_elf) ? (_type##64(_elf)+_n)->_field : (_type##32(_elf)+_n)->_field)
-
-#define RWELF(_elf, _mem, _field) RWELFN(_elf, _mem, _field, 0)
 	
-#define ELF_EHDR(_elf, _field)     RWELF(_elf,  EHDR, _field)
-#define ELF_SHDR(_elf, _field, _n) RWELFN(_elf, SHDR, _field, _n)
-#define ELF_PHDR(_elf, _field, _n) RWELFN(_elf, PHDR, _field, _n)
-#define ELF_SYM(_elf, _field, _n)  RWELFN(_elf, SYM,  _field, _n)
-#define ELF_DYN(_elf, _field, _n)  RWELFN(_elf, DYN,  _field, _n)
+#define ELF_EHDR(_elf, _field)     RWELF(_elf,  EHDR, _field,  0)
+#define ELF_SHDR(_elf, _field, _n) RWELF(_elf, SHDR, _field, _n)
+#define ELF_PHDR(_elf, _field, _n) RWELF(_elf, PHDR, _field, _n)
+#define ELF_SYM(_elf, _field, _n)  RWELF(_elf, SYM,  _field, _n)
+#define ELF_DYN(_elf, _field, _n)  RWELF(_elf, DYN,  _field, _n)
 
 /**
  * Helper to access Elf_(Shr, Ehdr, ...) member
