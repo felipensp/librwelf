@@ -29,13 +29,13 @@
  * rwelf_class(const rwelf *)
  * Returns the architecture of the binary
  */
-const char *rwelf_class(const Elf_Ehdr *ehdr) 
+const char *rwelf_class(const Elf_Ehdr *ehdr)
 {
 	assert(ehdr != NULL);
 
-	switch (EHDR_DATA(ehdr, e_ident)[EI_CLASS]) {
+	switch (RWELF_EHDR_DATA(ehdr, e_ident)[EI_CLASS]) {
 		case ELFCLASS32:	return "ELF32";
-		case ELFCLASS64:	return "ELF64";	
+		case ELFCLASS64:	return "ELF64";
 		case ELFCLASSNONE:
 		default:			return NULL;
 	}
@@ -48,8 +48,8 @@ const char *rwelf_class(const Elf_Ehdr *ehdr)
 uint32_t rwelf_version(const Elf_Ehdr *ehdr)
 {
 	assert(ehdr != NULL);
-	
-	switch (EHDR_DATA(ehdr, e_ident)[EI_VERSION]) {
+
+	switch (RWELF_EHDR_DATA(ehdr, e_ident)[EI_VERSION]) {
 		case EV_CURRENT:	return EV_CURRENT;
 		case EV_NONE:
 		default:			return 0;
@@ -63,8 +63,8 @@ uint32_t rwelf_version(const Elf_Ehdr *ehdr)
 const char *rwelf_data(const Elf_Ehdr *ehdr)
 {
 	assert(ehdr != NULL);
-	
-	switch (EHDR_DATA(ehdr, e_ident)[EI_DATA]) {
+
+	switch (RWELF_EHDR_DATA(ehdr, e_ident)[EI_DATA]) {
 		case ELFDATA2LSB:	return "2's complement, little-endian";
 		case ELFDATA2MSB:	return "2's complement, big-endian";
 		case ELFDATANONE:
@@ -79,8 +79,8 @@ const char *rwelf_data(const Elf_Ehdr *ehdr)
 const char *rwelf_type(const Elf_Ehdr *ehdr)
 {
 	assert(ehdr != NULL);
-	
-	switch (EHDR_DATA(ehdr, e_type)) {
+
+	switch (RWELF_EHDR_DATA(ehdr, e_type)) {
 		case ET_REL:	return "REL (relocatable file)";
 		case ET_EXEC:	return "EXEC (executable file)";
 		case ET_DYN:	return "DYN (shared object)";
@@ -97,8 +97,8 @@ const char *rwelf_type(const Elf_Ehdr *ehdr)
 uint16_t rwelf_num_sections(const Elf_Ehdr *ehdr)
 {
 	assert(ehdr != NULL);
-	
-	return EHDR_DATA(ehdr, e_shnum);
+
+	return RWELF_EHDR_DATA(ehdr, e_shnum);
 }
 
 /**
@@ -109,16 +109,16 @@ uint16_t rwelf_num_pheaders(const Elf_Ehdr *ehdr)
 {
 	assert(ehdr != NULL);
 
-	return EHDR_DATA(ehdr, e_phnum);
+	return RWELF_EHDR_DATA(ehdr, e_phnum);
 }
 
 /**
  * rwelf_entry(const rwelf *elf)
  * Returns the virtual address of entry point
- */ 
+ */
 uint64_t rwelf_entry(const Elf_Ehdr *ehdr)
 {
 	assert(ehdr != NULL);
-	
-	return EHDR_DATA(ehdr, e_entry);
+
+	return RWELF_EHDR_DATA(ehdr, e_entry);
 }

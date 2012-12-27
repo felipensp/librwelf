@@ -29,21 +29,21 @@ void rwelf_get_rela_by_num(const Elf_Shdr *shdr, size_t n,
 	Elf_Rela *rela)
 {
 	assert(shdr != NULL);
-	
+
 	if (!rela) {
 		return;
 	}
 	rela->elf = shdr->elf;
-	
+
 	if (ELF_IS_32(shdr->elf)) {
 		RELA32(rela) = (Elf32_Rela*)(shdr->elf->file +
-			SHDR_DATA(shdr, sh_offset));
+			RWELF_SHDR_DATA(shdr, sh_offset));
 		RELA32(rela) += n;
 	} else {
 		RELA64(rela) = (Elf64_Rela*)(shdr->elf->file +
-			SHDR_DATA(shdr, sh_offset));
+			RWELF_SHDR_DATA(shdr, sh_offset));
 		RELA64(rela) += n;
-	}	
+	}
 }
 
 /**
@@ -53,8 +53,8 @@ void rwelf_get_rela_by_num(const Elf_Shdr *shdr, size_t n,
 uint64_t rwelf_get_rela_offset(const Elf_Rela *rela)
 {
 	assert(rela != NULL);
-	
-	return RELA_DATA(rela, r_offset);	
+
+	return RWELF_RELA_DATA(rela, r_offset);
 }
 
 /**
@@ -65,8 +65,8 @@ uint64_t rwelf_get_rela_offset(const Elf_Rela *rela)
 uint64_t rwelf_get_rela_info(const Elf_Rela *rela)
 {
 	assert(rela != NULL);
-	
-	return RELA_DATA(rela, r_info);
+
+	return RWELF_RELA_DATA(rela, r_info);
 }
 
 /**
@@ -77,8 +77,8 @@ uint64_t rwelf_get_rela_info(const Elf_Rela *rela)
 int64_t rwelf_get_rela_addend(const Elf_Rela *rela)
 {
 	assert(rela != NULL);
-	
-	return RELA_DATA(rela, r_addend);
+
+	return RWELF_RELA_DATA(rela, r_addend);
 }
 
 /**
@@ -88,10 +88,10 @@ int64_t rwelf_get_rela_addend(const Elf_Rela *rela)
 uint64_t rwelf_get_rela_type(const Elf_Rela *rela)
 {
 	assert(rela != NULL);
-	
-	return ELF_IS_64(rela->elf) ? 
-		ELF64_R_TYPE(RELA_DATA(rela, r_info)) :
-		ELF32_R_TYPE(RELA_DATA(rela, r_info));
+
+	return ELF_IS_64(rela->elf) ?
+		ELF64_R_TYPE(RWELF_RELA_DATA(rela, r_info)) :
+		ELF32_R_TYPE(RWELF_RELA_DATA(rela, r_info));
 }
 
 /**
@@ -104,14 +104,14 @@ const unsigned char *rwelf_get_rela_symbol(const Elf_Rela *rela)
 
 	assert(rela != NULL);
 	assert(rela->elf != NULL);
-	
+
 	/* Read the symbol from .dynsym section + r_info */
 	rwelf_get_dyn_symbol_by_num(rela->elf,
-		(ELF_IS_64(rela->elf) ? 
-			ELF64_R_SYM(RELA_DATA(rela, r_info)) :
-			ELF32_R_SYM(RELA_DATA(rela, r_info))),
+		(ELF_IS_64(rela->elf) ?
+			ELF64_R_SYM(RWELF_RELA_DATA(rela, r_info)) :
+			ELF32_R_SYM(RWELF_RELA_DATA(rela, r_info))),
 		&sym);
-	
+
 	/* Get the name from .dynstr */
 	return rwelf_get_dyn_symbol_name(&sym);
 }

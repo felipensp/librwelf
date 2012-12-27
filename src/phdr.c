@@ -28,7 +28,7 @@
 static void inline _copy_phdr(const rwelf *elf, Elf_Phdr *phdr, size_t n)
 {
 	phdr->elf = elf;
-	
+
 	if (ELF_IS_32(elf)) {
 		PHDR32(phdr) = PHDR32(elf) + n;
 	} else if (ELF_IS_64(elf)) {
@@ -44,7 +44,7 @@ static void inline _copy_phdr(const rwelf *elf, Elf_Phdr *phdr, size_t n)
 void rwelf_get_pheader_by_num(const rwelf *elf, size_t num, Elf_Phdr *phdr)
 {
 	assert(elf != NULL);
-	
+
 	if (phdr) {
 		_copy_phdr(elf, phdr, num);
 	}
@@ -58,8 +58,8 @@ uint32_t rwelf_get_pheader_type(const Elf_Phdr *phdr)
 {
 	assert(phdr != NULL);
 	assert(phdr->elf != NULL);
-	
-	return PHDR_DATA(phdr, p_type);
+
+	return RWELF_PHDR_DATA(phdr, p_type);
 }
 
 /**
@@ -70,8 +70,8 @@ uint32_t rwelf_get_pheader_flags(const Elf_Phdr *phdr)
 {
 	assert(phdr != NULL);
 	assert(phdr->elf != NULL);
-	
-	return PHDR_DATA(phdr, p_flags);	
+
+	return RWELF_PHDR_DATA(phdr, p_flags);
 }
 
 /**
@@ -82,8 +82,8 @@ uint64_t rwelf_get_pheader_vaddr(const Elf_Phdr *phdr)
 {
 	assert(phdr != NULL);
 	assert(phdr->elf != NULL);
-	
-	return PHDR_DATA(phdr, p_vaddr);
+
+	return RWELF_PHDR_DATA(phdr, p_vaddr);
 }
 
 /**
@@ -94,9 +94,9 @@ const char *rwelf_get_pheader_type_name(const Elf_Phdr *phdr)
 {
 	assert(phdr != NULL);
 	assert(phdr->elf != NULL);
-	
+
 #define CASE(x) case x: return #x
-	switch (PHDR_DATA(phdr, p_type)) {
+	switch (RWELF_PHDR_DATA(phdr, p_type)) {
 		CASE(PT_NULL);
 		CASE(PT_LOAD);
 		CASE(PT_DYNAMIC);

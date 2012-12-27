@@ -37,53 +37,53 @@
 static void inline _find_str_tables(rwelf *elf)
 {
 	Elf_Shdr shdr;
-	
+
 	/* String table for section names (.shstrtab) */
 	elf->shstrtab = elf->file +
-		ELF_SHDR(elf, sh_offset, ELF_EHDR(elf, e_shstrndx));
+		RWELF_SHDR(elf, sh_offset, RWELF_EHDR(elf, e_shstrndx));
 
 	/* Symbol table */
 	if (rwelf_get_section_by_name(elf, ".symtab", &shdr) != -1) {
 		if (ELF_IS_64(elf)) {
-			SYM64(elf) = (Elf64_Sym*)(elf->file + 
-				SHDR_DATA(&shdr, sh_offset));
+			SYM64(elf) = (Elf64_Sym*)(elf->file +
+				RWELF_SHDR_DATA(&shdr, sh_offset));
 		} else {
 			SYM32(elf) = (Elf32_Sym*)(elf->file +
-				SHDR_DATA(&shdr, sh_offset));
+				RWELF_SHDR_DATA(&shdr, sh_offset));
 		}
 		elf->nsyms = rwelf_get_num_entries(&shdr);
 	}
-	
+
 	/* Symbol name string table */
 	if (rwelf_get_section_by_name(elf, ".strtab", &shdr) != -1) {
-		elf->strtab = elf->file + SHDR_DATA(&shdr, sh_offset);
+		elf->strtab = elf->file + RWELF_SHDR_DATA(&shdr, sh_offset);
 	}
-	
+
 	/* Dynamic string table */
 	if (rwelf_get_section_by_name(elf, ".dynstr", &shdr) != -1) {
-		elf->dynstr = elf->file + SHDR_DATA(&shdr, sh_offset);
+		elf->dynstr = elf->file + RWELF_SHDR_DATA(&shdr, sh_offset);
 	}
-	
+
 	/* Dynamic symbol table */
 	if (rwelf_get_section_by_name(elf, ".dynsym", &shdr) != -1) {
 		if (ELF_IS_32(elf)) {
 			DYNSYM32(elf) = (Elf32_Sym*)(elf->file +
-				SHDR_DATA(&shdr, sh_offset));
+				RWELF_SHDR_DATA(&shdr, sh_offset));
 		} else {
 			DYNSYM64(elf) = (Elf64_Sym*)(elf->file +
-				SHDR_DATA(&shdr, sh_offset));
+				RWELF_SHDR_DATA(&shdr, sh_offset));
 		}
 		elf->ndynsyms = rwelf_get_num_entries(&shdr);
 	}
-	
+
 	/* Dynamic section */
 	if (rwelf_get_section_by_name(elf, ".dynamic", &shdr) != -1) {
 		if (ELF_IS_32(elf)) {
-			DYN32(elf) = (Elf32_Dyn*)(elf->file + 
-				SHDR_DATA(&shdr, sh_offset));
+			DYN32(elf) = (Elf32_Dyn*)(elf->file +
+				RWELF_SHDR_DATA(&shdr, sh_offset));
 		} else {
 			DYN64(elf) = (Elf64_Dyn*)(elf->file +
-				SHDR_DATA(&shdr, sh_offset));
+				RWELF_SHDR_DATA(&shdr, sh_offset));
 		}
 		elf->ndyns = rwelf_get_num_entries(&shdr);
 	}
@@ -95,7 +95,7 @@ static void inline _find_str_tables(rwelf *elf)
 static int _prepare_internal_data(rwelf *elf)
 {
 	elf->class = elf->file[EI_CLASS];
-	
+
 	if (ELF_IS_32(elf)) {
 		EHDR32(elf) = (Elf32_Ehdr*) elf->file;
 		PHDR32(elf) = (Elf32_Phdr*) (elf->file + EHDR32(elf)->e_phoff);
@@ -109,7 +109,7 @@ static int _prepare_internal_data(rwelf *elf)
 	}
 
 	_find_str_tables(elf);
-	
+
 	return 1;
 }
 
@@ -127,30 +127,30 @@ rwelf *rwelf_open(const char *fname)
 	if ((fd = open(fname, O_RDONLY)) == -1) {
 		return NULL;
 	}
-	
+
 	fstat(fd, &st);
 
 	mem = mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
-	
+
 	if (mem == MAP_FAILED || memcmp(mem, ELFMAG, SELFMAG) != 0) {
 		close(fd);
 		return NULL;
 	}
-	
+
 	elf = calloc(1, sizeof(rwelf));
-	
+
 	assert(elf != NULL);
-	
+
 	elf->file = mem;
-	elf->fd   = fd;	
+	elf->fd   = fd;
 	elf->size = st.st_size;
 
 	if (_prepare_internal_data(elf)) {
-		return elf;		
+		return elf;
 	}
-	
+
 	rwelf_close(elf);
-	
+
 	return NULL;
 }
 
@@ -161,7 +161,7 @@ rwelf *rwelf_open(const char *fname)
 void rwelf_get_header(const rwelf *elf, Elf_Ehdr *ehdr)
 {
 	assert(elf != NULL);
-	
+
 	ehdr->elf = elf;
 
 	if (ELF_IS_32(elf)) {
@@ -178,7 +178,7 @@ void rwelf_get_header(const rwelf *elf, Elf_Ehdr *ehdr)
 uint16_t rwelf_num_symbols(const rwelf *elf)
 {
 	assert(elf != NULL);
-	
+
 	return elf->nsyms;
 }
 
@@ -189,7 +189,7 @@ uint16_t rwelf_num_symbols(const rwelf *elf)
 uint16_t rwelf_num_dyn_symbols(const rwelf *elf)
 {
 	assert(elf != NULL);
-	
+
 	return elf->ndynsyms;
 }
 
@@ -206,6 +206,6 @@ void rwelf_close(rwelf *elf)
 	}
 
 	munmap(elf->file, elf->size);
-	close(elf->fd);	
+	close(elf->fd);
 	free(elf);
 }

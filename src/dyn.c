@@ -28,7 +28,7 @@
 static void inline _copy_dyn(const rwelf *elf, Elf_Dyn *dyn, size_t n)
 {
 	dyn->elf = elf;
-	
+
 	if (ELF_IS_32(elf)) {
 		DYN32(dyn) = DYN32(elf) + n;
 	} else if (ELF_IS_64(elf)) {
@@ -44,7 +44,7 @@ static void inline _copy_dyn(const rwelf *elf, Elf_Dyn *dyn, size_t n)
 void rwelf_get_dynamic_by_num(const rwelf *elf, size_t num, Elf_Dyn *dyn)
 {
 	assert(elf != NULL);
-	
+
 	if (dyn) {
 		_copy_dyn(elf, dyn, num);
 	}
@@ -60,9 +60,9 @@ int rwelf_get_dynamic_by_tag(const rwelf *elf, int64_t tag, Elf_Dyn *dyn)
 	int i;
 
 	assert(elf != NULL);
-	
+
 	for (i = 0; i < elf->ndyns; ++i) {
-		if (ELF_DYN(elf, d_tag, i) == tag) {
+		if (RWELF_DYN(elf, d_tag, i) == tag) {
 			if (dyn) {
 				_copy_dyn(elf, dyn, i);
 			}
@@ -81,13 +81,13 @@ const unsigned char *rwelf_get_dynamic_strval(const Elf_Dyn *dyn)
 	assert(dyn != NULL);
 	assert(dyn->elf != NULL);
 	assert(dyn->elf->dynstr != NULL);
-	
-	switch (DYN_DATA(dyn, d_tag)) {
+
+	switch (RWELF_DYN_DATA(dyn, d_tag)) {
 		case DT_SONAME:  /* Shared library name */
 		case DT_NEEDED:  /* Needed library */
 		case DT_RPATH:   /* RPATH */
 		case DT_RUNPATH: /* Library search path */
-			return dyn->elf->dynstr + DYN_DATA(dyn, d_un.d_val);
+			return dyn->elf->dynstr + RWELF_DYN_DATA(dyn, d_un.d_val);
 		default:
 			return NULL;
 	}
@@ -101,8 +101,8 @@ int64_t rwelf_get_dynamic_tag(const Elf_Dyn *dyn)
 {
 	assert(dyn != NULL);
 	assert(dyn->elf != NULL);
-	
-	return DYN_DATA(dyn, d_tag);
+
+	return RWELF_DYN_DATA(dyn, d_tag);
 }
 
 /**
@@ -112,10 +112,10 @@ int64_t rwelf_get_dynamic_tag(const Elf_Dyn *dyn)
 const char *rwelf_get_dynamic_tag_name(const Elf_Dyn *dyn)
 {
 	assert(dyn != NULL);
-	assert(dyn->elf != NULL);	
-	
+	assert(dyn->elf != NULL);
+
 #define CASE(x) case x: return #x
-	switch (DYN_DATA(dyn, d_tag)) {
+	switch (RWELF_DYN_DATA(dyn, d_tag)) {
 		CASE(DT_NULL);
 		CASE(DT_NEEDED);
 		CASE(DT_PLTRELSZ);

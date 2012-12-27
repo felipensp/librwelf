@@ -66,12 +66,12 @@
  */
 #define RWELF(_elf, _type, _field, _n) \
 	(ELF_IS_64(_elf) ? (_type##64(_elf)+_n)->_field : (_type##32(_elf)+_n)->_field)
-	
-#define ELF_EHDR(_elf, _field)     RWELF(_elf, EHDR, _field,  0)
-#define ELF_SHDR(_elf, _field, _n) RWELF(_elf, SHDR, _field, _n)
-#define ELF_PHDR(_elf, _field, _n) RWELF(_elf, PHDR, _field, _n)
-#define ELF_SYM(_elf, _field, _n)  RWELF(_elf, SYM,  _field, _n)
-#define ELF_DYN(_elf, _field, _n)  RWELF(_elf, DYN,  _field, _n)
+
+#define RWELF_EHDR(_elf, _field)     RWELF(_elf, EHDR, _field,  0)
+#define RWELF_SHDR(_elf, _field, _n) RWELF(_elf, SHDR, _field, _n)
+#define RWELF_PHDR(_elf, _field, _n) RWELF(_elf, PHDR, _field, _n)
+#define RWELF_SYM(_elf, _field, _n)  RWELF(_elf, SYM,  _field, _n)
+#define RWELF_DYN(_elf, _field, _n)  RWELF(_elf, DYN,  _field, _n)
 
 /**
  * Helper to access Elf_(Shr, Ehdr, ...) member
@@ -79,12 +79,12 @@
 #define RWELF2(_var, _type, _field) \
 	(ELF_IS_64((_var)->elf) ? _type##64(_var)->_field : _type##32(_var)->_field)
 
-#define EHDR_DATA(_ehdr, _field) RWELF2(_ehdr, EHDR, _field)
-#define SHDR_DATA(_shdr, _field) RWELF2(_shdr, SHDR, _field)
-#define SYM_DATA(_sym, _field)   RWELF2(_sym,  SYM,  _field)
-#define PHDR_DATA(_phdr, _field) RWELF2(_phdr, PHDR, _field)
-#define DYN_DATA(_dyn, _field)   RWELF2(_dyn,  DYN,  _field)
-#define RELA_DATA(_rela, _field) RWELF2(_rela, RELA, _field)
+#define RWELF_EHDR_DATA(_ehdr, _field) RWELF2(_ehdr, EHDR, _field)
+#define RWELF_SHDR_DATA(_shdr, _field) RWELF2(_shdr, SHDR, _field)
+#define RWELF_SYM_DATA(_sym, _field)   RWELF2(_sym,  SYM,  _field)
+#define RWELF_PHDR_DATA(_phdr, _field) RWELF2(_phdr, PHDR, _field)
+#define RWELF_DYN_DATA(_dyn, _field)   RWELF2(_dyn,  DYN,  _field)
+#define RWELF_RELA_DATA(_rela, _field) RWELF2(_rela, RELA, _field)
 
 typedef union {
 	Elf32_Shdr *_32;
@@ -101,7 +101,7 @@ typedef union {
 	Elf64_Ehdr *_64;
 } rwelf_ehdr;
 
-typedef union {                   
+typedef union {
 	Elf32_Sym *_32;
 	Elf64_Sym *_64;
 } rwelf_sym;
@@ -121,23 +121,23 @@ typedef struct {
 	unsigned char *file;      /* Mapped memory of file */
 	size_t size;              /* Size of the file */
 	unsigned char class;      /* ELF class 32/64 bit */
-	rwelf_ehdr ehdr;	
-	rwelf_phdr phdr;	
-	rwelf_shdr shdr;                 
+	rwelf_ehdr ehdr;
+	rwelf_phdr phdr;
+	rwelf_shdr shdr;
 	rwelf_sym  sym;           /* .symtab section */
 	rwelf_dyn  dyn;           /* .dynamic section */
 	rwelf_sym  dynsym;        /* .dynsym section */
 	size_t nsyms;             /* Number of symbols on .symtab */
 	size_t ndyns;             /* Number of entries on .dynamic */
 	size_t ndynsyms;          /* Number of symbols on .dynsym */
-	
+
 	unsigned char *dynstr;    /* Dynamic string table (.dynstr) */
 	unsigned char *shstrtab;  /* Section name string table (.shstrtab) */
 	unsigned char *strtab;    /* Symbol name string table (.strtab) */
 } rwelf;
 
 /**
- * ElfN_[ESP]hdr class independent-version 
+ * ElfN_[ESP]hdr class independent-version
  */
 typedef struct {
 	const rwelf *elf;
@@ -178,7 +178,7 @@ extern uint16_t rwelf_num_symbols(const rwelf*);
 extern void rwelf_get_header(const rwelf*, Elf_Ehdr*);
 
 /**
- * ElfN_Ehdr related functions 
+ * ElfN_Ehdr related functions
  */
 extern const char *rwelf_class(const Elf_Ehdr*);
 extern const char *rwelf_data(const Elf_Ehdr*);
