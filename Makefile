@@ -17,6 +17,8 @@ librwelf:
 	$(CC) -fPIC -g -c -Wall -pedantic -I$(INC)/ -o$(SRC)/phdr.o $(SRC)/phdr.c
 	$(CC) -fPIC -g -c -Wall -pedantic -I$(INC)/ -o$(SRC)/dyn.o $(SRC)/dyn.c
 	$(CC) -fPIC -g -c -Wall -pedantic -I$(INC)/ -o$(SRC)/rela.o $(SRC)/rela.c
+
+	mkdir -p $(LIB)
 	$(CC) -shared -Wl,-soname,$(LIB)/librwelf.so.0 -o$(LIB)/librwelf.so.0.1.0 $(OBJS)
 	ln -sf librwelf.so.0.1.0 $(LIB)/librwelf.so.0
 	ln -sf librwelf.so.0.1.0 $(LIB)/librwelf.so
@@ -24,7 +26,7 @@ librwelf:
 	$(CC) -orwelf -I$(INC)/ $(SRC)/rwelf/main.c -L$(LIB)/ -lrwelf
 
 clean:
-	rm -rf rwelf $(LIB)/librwelf.so* $(SRC)/*.o
+	rm -rf rwelf $(LIB) $(SRC)/*.o
 
 install:
 	cp $(LIB)/* $(INSTALLLIB)
