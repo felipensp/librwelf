@@ -39,7 +39,7 @@ static void _show_elf_header(const Elf_Ehdr *ehdr)
 	printf("Type:     %s\n", rwelf_type(ehdr));
 	printf("Sections: %d\n", rwelf_num_sections(ehdr));
 	printf("PHeaders: %d\n", rwelf_num_pheaders(ehdr));
-	printf("Entry:    %p\n", rwelf_entry(ehdr));
+	printf("Entry:    %p\n", (void *) rwelf_entry(ehdr));
 }
 
 /**
@@ -114,7 +114,7 @@ static void _show_elf_relocations(const Elf_Ehdr *ehdr)
 			case SHT_REL:
 			case SHT_RELA:
 				n = rwelf_get_num_entries(&sec);
-				printf("Relocation entries: %d\n", n);
+				printf("Relocation entries: %d\n",(int) n);
 					
 				_show_elf_rela(&sec, n);
 				break;
@@ -163,8 +163,10 @@ int main(int argc, char **argv)
 		}		
 	}
 	
-	if (!file) {
-		return 0;
+	if (!file || !c) {
+	  printf("You have to specific options and an ELF file.\n");
+	  printf("Eg. rwelf -h /bin/ls\n");
+	  return 0;
 	}
 	
 	if (!(elf = rwelf_open(file))) {

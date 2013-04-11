@@ -1,22 +1,37 @@
 CC?=gcc
 
-OBJS=src/*.o
+SRC=src
+INC=include
+LIB=lib
+OBJS=$(SRC)/*.o
 
-rwelf: librwelf
-	$(CC) -otools/rwelf/rwelf -Iinclude/ tools/rwelf/main.c -L. -lrwelf
+INSTALLINC=/usr/include
+INSTALLLIB=/lib
+INSTALLBIN=/usr/bin
 
 librwelf:
-	$(CC) -fPIC -g -c -Wall -pedantic -Iinclude/ -osrc/elf.o src/elf.c
-	$(CC) -fPIC -g -c -Wall -pedantic -Iinclude/ -osrc/ehdr.o src/ehdr.c
-	$(CC) -fPIC -g -c -Wall -pedantic -Iinclude/ -osrc/shdr.o src/shdr.c
-	$(CC) -fPIC -g -c -Wall -pedantic -Iinclude/ -osrc/sym.o src/sym.c
-	$(CC) -fPIC -g -c -Wall -pedantic -Iinclude/ -osrc/phdr.o src/phdr.c
-	$(CC) -fPIC -g -c -Wall -pedantic -Iinclude/ -osrc/dyn.o src/dyn.c
-	$(CC) -fPIC -g -c -Wall -pedantic -Iinclude/ -osrc/rela.o src/rela.c
-	$(CC) -shared -Wl,-soname,librwelf.so.0 -olibrwelf.so.0.1.0 $(OBJS)
-	ln -sf librwelf.so.0.1.0 librwelf.so.0
-	ln -sf librwelf.so.0.1.0 librwelf.so
+	$(CC) -fPIC -g -c -Wall -pedantic -I$(INC)/ -o$(SRC)/elf.o $(SRC)/elf.c
+	$(CC) -fPIC -g -c -Wall -pedantic -I$(INC)/ -o$(SRC)/ehdr.o $(SRC)/ehdr.c
+	$(CC) -fPIC -g -c -Wall -pedantic -I$(INC)/ -o$(SRC)/shdr.o $(SRC)/shdr.c
+	$(CC) -fPIC -g -c -Wall -pedantic -I$(INC)/ -o$(SRC)/sym.o $(SRC)/sym.c
+	$(CC) -fPIC -g -c -Wall -pedantic -I$(INC)/ -o$(SRC)/phdr.o $(SRC)/phdr.c
+	$(CC) -fPIC -g -c -Wall -pedantic -I$(INC)/ -o$(SRC)/dyn.o $(SRC)/dyn.c
+	$(CC) -fPIC -g -c -Wall -pedantic -I$(INC)/ -o$(SRC)/rela.o $(SRC)/rela.c
+
+	mkdir -p $(LIB)
+	$(CC) -shared -Wl,-soname,$(LIB)/librwelf.so.0 -o$(LIB)/librwelf.so.0.1.0 $(OBJS)
+	ln -sf librwelf.so.0.1.0 $(LIB)/librwelf.so.0
+	ln -sf librwelf.so.0.1.0 $(LIB)/librwelf.so
+
+	$(CC) -orwelf -I$(INC)/ $(SRC)/rwelf/main.c -L$(LIB)/ -lrwelf
 
 clean:
-	rm -rf tools/rwelf/rwelf librwelf.so* src/*.o
-	
+	rm -rf rwelf $(LIB) $(SRC)/*.o
+
+install:
+	cp $(LIB)/* $(INSTALLLIB)
+	ln -sf librwelf.so.0.1.0 $(INSTALLLIB)/librwelf.so.0
+	ln -sf librwelf.so.0.1.0 $(INSTALLLIB)/librwelf.so
+	cp $(INC)/* $(INSTALLINC)
+
+	$(CC) -o$(INSTALLBIN)/rwelf -I$(INSTALLINC)/ $(SRC)/rwelf/main.c -L$(INSTALLLIB)/ -lrwelf
